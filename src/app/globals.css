@@ -137,8 +137,9 @@
   @apply text-base text-[#6F6D71] font-normal leading-[22px] tracking-[0%] ;
 }
 .common-text {
-  @apply text-base leading-[22px] font-medium tracking-[0%];
+  @apply text-base leading-[22px] font-medium !tracking-[0%];
 }
+/* All shadows */
 .authform-shadow {
   box-shadow: 0px 4px 50px 0px #0000000A;
 }
@@ -147,4 +148,7 @@
 }
 .auth-heading{
   @apply text-2xl font-bold  tracking-[0%] leading-[30px] ;
+}
+.reset-method-selector-shadow {
+  box-shadow: 0px 4px 50px 0px #0000000D;
 }

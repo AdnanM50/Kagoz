@@ -1,11 +1,11 @@
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Input } from '@/components/ui/input'
-import Image from 'next/image'
 import React from 'react'
-import { Mail, Phone, Lock } from 'lucide-react'
-
-const LoginForm = () => {
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Mail, Phone, Lock } from "lucide-react";
+import Image from 'next/image';
+import Link from 'next/link';
+const SignupForm = () => {
   return (
     <form className="space-y-5 w-full">
             {/* Email */}
@@ -16,6 +16,13 @@ const LoginForm = () => {
               icon={Mail}
             />
 
+            {/* Phone */}
+            <Input
+              type="tel"
+              label="Phone Number"
+              placeholder="Enter your phone number"
+              icon={Phone}
+            />
 
             {/* Password */}
             <Input
@@ -25,19 +32,24 @@ const LoginForm = () => {
               icon={Lock}
             />
 
+            {/* Confirm Password */}
+            <Input
+              type="password"
+              label="Confirm Password"
+              placeholder="Re-enter your password"
+              icon={Lock}
+            />
+
             {/* Checkbox */}
-          <div className="flex justify-between">
-              <div className="flex items-center  space-x-2">
+            <div className="flex items-center  space-x-2">
               <Checkbox id="terms" />
               <label
                 htmlFor="terms"
                 className="text-sm text-[#353535] leading-5 font-normal inter-font"
               >
-              Remember me
+              I agree to the Terms of Service and Privacy Policy
               </label>
             </div>
-            <p className="text-sm text-[#DC3545] leading-5 font-normal inter-font">Forgot password?</p>
-          </div>
 
             {/* Sign up button */}
             <Button variant="submit" className="w-full cursor-pointer">
@@ -64,12 +76,12 @@ const LoginForm = () => {
 
             <p className="text-center common-text text-[#2D3643] inter-font">
               Already have an account?{" "}
-              <a href="#" className="text-[#6F00FF] font-semibold">
+              <Link href="/signin" className="text-[#6F00FF] font-semibold">
                 Sign in
-              </a>
+              </Link>
             </p>
           </form>
   )
 }
 
-export default LoginForm
+export default SignupForm

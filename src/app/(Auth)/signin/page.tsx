@@ -4,12 +4,12 @@ import {  ArrowLeft, CheckCircle } from "lucide-react";
 
 import Image from "next/image";
 import Link from "next/link";
-import LoginForm from "./_components/loginform";
+import LoginForm from "../_components/loginform";
 
 const Signin: React.FC = () => {
   return (
     <div className=" flex items-center justify-center  py-[54px]">
-      <div className="max-w-[942px] place-items-center grid md:grid-cols-2 gap-[56px] bg-white rounded-2xl overflow-hidden">
+      <div className="max-w-[942px] place-items-center grid md:grid-cols-2 gap-[56px] bg-white rounded-2xl ">
         {/* Left side */}
         <div className="relative hidden md:flex items-center justify-center  pl-7 mx-1.5">
           {/* Background gradient image */}
