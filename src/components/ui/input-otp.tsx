@@ -2,37 +2,101 @@
 
 import * as React from "react"
 import { OTPInput, OTPInputContext } from "input-otp"
-import { MinusIcon } from "lucide-react"
-
 import { cn } from "@/lib/utils"
 
-function InputOTP({
-  className,
-  containerClassName,
-  ...props
-}: React.ComponentProps<typeof OTPInput> & {
+const REGEXP_ONLY_DIGITS = /^[0-9]+$/
+
+// Custom, minimal wrapper props – no collisions with DOM or library types
+interface InputOTPProps {
+  value: string
+  onChange: (value: string) => void
+  maxLength?: number
+  className?: string
   containerClassName?: string
-}) {
-  return (
-    <OTPInput
-      data-slot="input-otp"
-      containerClassName={cn(
-        "flex items-center gap-2 has-disabled:opacity-50",
-        containerClassName
-      )}
-      className={cn("disabled:cursor-not-allowed", className)}
-      {...props}
-    />
-  )
+  children?: React.ReactNode
+  inputMode?: React.InputHTMLAttributes<HTMLInputElement>["inputMode"]
+  autoComplete?: React.InputHTMLAttributes<HTMLInputElement>["autoComplete"]
+  pattern?: string,
+  label?: string
 }
 
-function InputOTPGroup({ className, ...props }: React.ComponentProps<"div">) {
+function InputOTP({
+  value,
+  onChange,
+  maxLength = 6,
+  className,
+  containerClassName,
+  children,
+  inputMode = "numeric",
+  autoComplete = "one-time-code",
+  pattern = REGEXP_ONLY_DIGITS.source,
+    label
+}: InputOTPProps) {
+  // Guard state updates so we never exceed maxLength and only allow digits
+  const handleChange = React.useCallback(
+    (next: string) => {
+      const cleaned = next.replace(/\D/g, "")
+      if (cleaned.length <= maxLength) onChange(cleaned)
+    },
+    [onChange, maxLength]
+  )
+
+  // Block extra numeric keystrokes once OTP is full
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const k = e.key
+    const isDigit = /^[0-9]$/.test(k)
+    const allowed =
+      k === "Backspace" ||
+      k === "Delete" ||
+      k === "ArrowLeft" ||
+      k === "ArrowRight" ||
+      k === "Tab"
+
+    if (!allowed && value.length >= maxLength && isDigit) {
+      e.preventDefault()
+    }
+  }
+
+  // Block extra input at the event-source level (covers IME & mobile)
+  const handleBeforeInput = (e: React.FormEvent<HTMLInputElement> & { data?: string }) => {
+    const data = (e as unknown as InputEvent).data ?? (e as any).data
+    if (data && /\d/.test(data) && value.length >= maxLength) {
+      e.preventDefault()
+    }
+  }
+
+  // Sanitize paste: only digits and only up to remaining slots
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault()
+    const pasted = e.clipboardData.getData("text") || ""
+    const digitsOnly = pasted.replace(/\D/g, "")
+    if (!digitsOnly) return
+    const remaining = Math.max(0, maxLength - value.length)
+    const next = (value + digitsOnly.slice(0, remaining)).slice(0, maxLength)
+    onChange(next)
+  }
+
   return (
-    <div
-      data-slot="input-otp-group"
-      className={cn("flex items-center", className)}
-      {...props}
-    />
+     <div className="flex flex-col gap-2 w-full">
+     {label && (
+        <label className="common-text text-[#111827]">{label}</label>
+      )}
+    <OTPInput
+      value={value}
+      onChange={handleChange}
+      maxLength={maxLength}
+      containerClassName={cn("flex items-center gap-2", containerClassName)}
+      className={cn("disabled:cursor-not-allowed", className)}
+      inputMode={inputMode}
+      autoComplete={autoComplete}
+      pattern={pattern}
+      onKeyDown={handleKeyDown as any}
+      onBeforeInput={handleBeforeInput as any}
+      onPaste={handlePaste as any}
+    >
+      {children}
+    </OTPInput>
+    </div>
   )
 }
 
@@ -40,38 +104,27 @@ function InputOTPSlot({
   index,
   className,
   ...props
-}: React.ComponentProps<"div"> & {
-  index: number
-}) {
+}: React.ComponentProps<"div"> & { index: number }) {
   const inputOTPContext = React.useContext(OTPInputContext)
-  const { char, hasFakeCaret, isActive } = inputOTPContext?.slots[index] ?? {}
+  const { char, isActive } = inputOTPContext?.slots[index] ?? {}
 
   return (
     <div
       data-slot="input-otp-slot"
       data-active={isActive}
       className={cn(
-        "data-[active=true]:border-ring data-[active=true]:ring-ring/50 data-[active=true]:aria-invalid:ring-destructive/20 dark:data-[active=true]:aria-invalid:ring-destructive/40 aria-invalid:border-destructive data-[active=true]:aria-invalid:border-destructive dark:bg-input/30 border-input relative flex h-9 w-9 items-center justify-center border-y border-r text-sm shadow-xs transition-all outline-none first:rounded-l-md first:border-l last:rounded-r-md data-[active=true]:z-10 data-[active=true]:ring-[3px]",
+        "relative flex h-12 w-12 items-center justify-center text-lg font-medium",
+        "border rounded-md bg-white",
+        isActive ? "border-black" : "border-gray-300",
+        "transition-all duration-200",
         className
       )}
       {...props}
     >
       {char}
-      {hasFakeCaret && (
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <div className="animate-caret-blink bg-foreground h-4 w-px duration-1000" />
-        </div>
-      )}
+      {/* caret removed on purpose */}
     </div>
   )
 }
 
-function InputOTPSeparator({ ...props }: React.ComponentProps<"div">) {
-  return (
-    <div data-slot="input-otp-separator" role="separator" {...props}>
-      <MinusIcon />
-    </div>
-  )
-}
-
-export { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator }
+export { InputOTP, InputOTPSlot }
