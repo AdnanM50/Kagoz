@@ -34,7 +34,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className={`space-y-1 ${maxWidthClass}`}>
         {label && (
-          <label className="common-text  text-[#111827]">{label}</label>
+          <label className="common-text !text-start text-[#111827]">{label}</label>
         )}
 
         <div
