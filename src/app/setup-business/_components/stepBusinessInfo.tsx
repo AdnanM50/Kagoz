@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Building2 } from "lucide-react"
+import { JSX } from "react"
 
 interface StepProps {
   businessData: BusinessData
@@ -16,20 +17,21 @@ interface StepProps {
 
 export function StepBusinessInfo({ businessData, updateBusinessData, renderBusinessPreview }: StepProps) {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
       <div className="lg:col-span-2">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center space-x-2 mb-6">
-              <Building2 className="w-5 h-5 text-purple-600" />
-              <h2 className="text-lg font-semibold">Business Information</h2>
+        <div>
+          <div className="">
+            <div className="flex items-center space-x-2 mb-4">
+              <Building2 className="size-6 text-[#6F00FF]" />
+              <h2 className="auth-heading !font-medium text-[#111827]">Business Information</h2>
             </div>
-            <p className="text-gray-600 mb-6">Tell us about your business</p>
+            <p className="text-[#2D3643] mb-6">Tell us about your business</p>
 
             <div className="space-y-6">
               <div>
-                <Label htmlFor="businessName">Business Name *</Label>
+                {/* <Label htmlFor="businessName">Business Name *</Label> */}
                 <Input
+                width="100%"
                   id="businessName"
                   value={businessData.name}
                   onChange={(e) => updateBusinessData("name", e.target.value)}
@@ -95,8 +97,8 @@ export function StepBusinessInfo({ businessData, updateBusinessData, renderBusin
                 </Select>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
 
       <div>

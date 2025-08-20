@@ -4,11 +4,30 @@ import { Lock, Mail, Phone, Check, ArrowLeft } from "lucide-react";
 import Link from 'next/link';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-// import { useReset } from './methodContext';
+import SuccessModal from '@/app/(Auth)/_components/successDialog';
+
 const ResetPassword = () => {
+    const [showSuccess, setShowSuccess] = useState(false);
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        setShowSuccess(true);
+    };
 
     return (
         <div className="max-w-[452px] my-[103px] inter-font mx-auto bg-white reset-method-selector-shadow rounded-3xl py-4 sm:py-8 px-5 sm:px-[42px] text-center ">
+            {/* Success Modal */}
+            {showSuccess && (
+                <SuccessModal
+                    open={showSuccess}
+                    onOpenChange={setShowSuccess}
+                    title="Success"
+                    description="Your password has been reset successfully"
+                    actionLabel="Back to Sign in"
+                    actionHref="/signin"
+                />
+            )}
+
             {/* Icon */}
             <div className="mx-auto size-16 sm:size-32 rounded-full bg-gradient-to-r from-[#9D6BFF] to-[#431799] flex items-center justify-center">
                 <Lock strokeWidth={1} className="text-white size-8 sm:size-16" />
@@ -25,12 +44,12 @@ const ResetPassword = () => {
             </div>
 
             {/* Options */}
-            <form className="space-y-4 flex flex-col items-start !w-full justify-start">
+            <form className="space-y-4 flex flex-col items-start !w-full justify-start" onSubmit={handleSubmit}>
                 <div className="flex flex-col items-start justify-start !w-full">
                     <p className="common-text !text-start text-[#111827]">New Password</p>
                     <Input
                         type="password"
-                        className='w-[368px] '
+                        className='w-full sm:w-[368px] '
                         placeholder="Enter your password"
                         icon={Lock}
                     />
@@ -40,17 +59,18 @@ const ResetPassword = () => {
                 <div className="">
                     <p className="common-text !text-start text-[#111827]">Confirm Password</p>
                     <Input
-                        className='w-[368px] '
+                        width="100%"
+                        className='w-full sm:w-[368px] '
                         type="password"
                         placeholder="Re-enter your password"
                         icon={Lock}
                     />
                 </div>
                 <Button type="submit" 
-              variant="submit" 
-              className="w-full cursor-pointer">
-             Reset Password
-           </Button>
+                    variant="submit" 
+                    className="w-full cursor-pointer">
+                    Reset Password
+                </Button>
             </form>
 
             {/* Back Link */}
@@ -61,5 +81,4 @@ const ResetPassword = () => {
         </div>
     )
 }
-
-export default ResetPassword
+export default ResetPassword;

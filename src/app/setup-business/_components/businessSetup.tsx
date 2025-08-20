@@ -115,35 +115,58 @@ export function BusinessSetupWizard() {
     }
   }
 
-  const renderProgressBar = () => (
-    <div className="w-full bg-white border-b border-gray-200 py-4 mb-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-900">Business Setup</h1>
-          <div className="text-sm text-gray-500">
-            Step {currentStep + 1} of {STEPS.length - 1} - {Math.round(((currentStep + 1) / (STEPS.length - 1)) * 100)}%
-            Complete
-          </div>
+
+const renderProgressBar = () => (
+  <div className="w-full bg-white border-b border-gray-200 py-[25px] ">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="flex items-center justify-between">
+        <h1 className="text-[32px] leading-[38px] tracking-[0%] font-semibold text-[#111827]">Business Setup</h1>
+        <div className="text-sm text-gray-500">
+          Step {currentStep + 1} of 4 - {Math.round(((currentStep + 1) / (STEPS.length - 1)) * 100)}% Complete
         </div>
-        <div className="flex items-center mt-6">
-          {STEPS.slice(0, -1).map((step, index) => (
-            <div key={step} className="flex items-center flex-1">
+      </div>
+      {/* Progress container */}
+      <div className="relative mt-10">
+        {/* Gray background line */}
+        <div className="absolute top-5 left-0 w-full h-2 bg-[#F2F2F2] rounded-full">
+          {/* Purple active line */}
+          <div
+            className="h-2 bg-purple-600 rounded-full transition-all duration-300"
+            style={{
+              width: `${((currentStep + 0.5) / (STEPS.length - 1)) * 100}%`,
+            }}
+          />
+        </div>
+        {/* Step circles */}
+        <div className="relative flex justify-between">
+          {Array.from({ length: STEPS.length }, (_, index) => (
+            <div key={index} className="flex flex-col items-center">
               <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                  index <= currentStep ? "bg-purple-600 text-white" : "bg-gray-200 text-gray-500"
+                className={`sm:size-8 size-6 rounded-full mb-8 flex items-center justify-center text-sm font-medium z-10 ${
+                  index < currentStep
+                    ? "bg-purple-600 text-white"
+                    : index === currentStep
+                    ? "bg-purple-600 text-white"
+                    : "bg-white border-2 border-[#D1D1D1] text-gray-500"
                 }`}
+                style={{ marginTop: "-18px" }}
               >
-                {index < currentStep ? <Check className="w-4 h-4" /> : index + 1}
+                {index < currentStep ? (
+                  <Check className="w-4 h-4" />
+                ) : index === STEPS.length - 1 ? (
+                  <Check className="w-4 h-4" />
+                ) : (
+                  index + 1
+                )}
               </div>
-              {index < STEPS.length - 2 && (
-                <div className={`h-1 flex-1 mx-4 ${index < currentStep ? "bg-purple-600" : "bg-gray-200"}`} />
-              )}
+            
             </div>
           ))}
         </div>
       </div>
     </div>
-  )
+  </div>
+)
 
   const renderBusinessPreview = () => (
     <Card className="w-full max-w-sm">
@@ -327,10 +350,10 @@ export function BusinessSetupWizard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       {currentStep < STEPS.length - 1 && renderProgressBar()}
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-[1184px] mx-auto mt-8">
         {renderStep()}
 
         {currentStep < STEPS.length - 1 && (
