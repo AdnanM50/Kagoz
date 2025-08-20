@@ -3,11 +3,6 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Switch } from "@/components/ui/switch"
 import { Badge } from "@/components/ui/badge"
 import {
   Clock,
@@ -15,17 +10,19 @@ import {
   Phone,
   Globe,
   Facebook,
-  Upload,
   Check,
   Calendar,
   Building2,
   Star,
-  Camera,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react"
+import { StepBusinessInfo } from "./stepBusinessInfo"
+import { StepHours } from "./stepHours"
+import { StepMediaBranding } from "./stepMediaBranding"
+import { StepLocationContact } from "./stepLocationContact" 
 
-interface BusinessData {
+export interface BusinessData {
   name: string
   tagline: string
   about: string
@@ -62,7 +59,7 @@ const STEPS = [
   "Complete",
 ]
 
-const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+// days moved to step component
 
 export function BusinessSetupWizard() {
   const [currentStep, setCurrentStep] = useState(0)
@@ -103,8 +100,11 @@ export function BusinessSetupWizard() {
     setBusinessData((prev) => ({ ...prev, [field]: value }))
   }
 
-  const nextStep = () => {
+  const nextStep = async () => {
     if (currentStep < STEPS.length - 1) {
+      if (currentStep === 3) {
+        await submitBusiness()
+      }
       setCurrentStep(currentStep + 1)
     }
   }
@@ -265,532 +265,36 @@ export function BusinessSetupWizard() {
     switch (currentStep) {
       case 0:
         return (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2">
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center space-x-2 mb-6">
-                    <Building2 className="w-5 h-5 text-purple-600" />
-                    <h2 className="text-lg font-semibold">Business Information</h2>
-                  </div>
-                  <p className="text-gray-600 mb-6">Tell us about your business</p>
-
-                  <div className="space-y-6">
-                    <div>
-                      <Label htmlFor="businessName">Business Name *</Label>
-                      <Input
-                        id="businessName"
-                        value={businessData.name}
-                        onChange={(e) => updateBusinessData("name", e.target.value)}
-                        className="mt-1"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="tagline">Tagline *</Label>
-                      <div className="flex justify-between items-center mb-1">
-                        <span></span>
-                        <span className="text-xs text-gray-500">{businessData.tagline.length}/100 characters</span>
-                      </div>
-                      <Input
-                        id="tagline"
-                        value={businessData.tagline}
-                        onChange={(e) => updateBusinessData("tagline", e.target.value)}
-                        maxLength={100}
-                        className="mt-1"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="about">About *</Label>
-                      <div className="flex justify-between items-center mb-1">
-                        <span></span>
-                        <span className="text-xs text-gray-500">{businessData.about.length}/1000 characters</span>
-                      </div>
-                      <Textarea
-                        id="about"
-                        value={businessData.about}
-                        onChange={(e) => updateBusinessData("about", e.target.value)}
-                        maxLength={1000}
-                        rows={6}
-                        className="mt-1"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="startingDate">Business Starting Date *</Label>
-                      <Input
-                        id="startingDate"
-                        value={businessData.startingDate}
-                        onChange={(e) => updateBusinessData("startingDate", e.target.value)}
-                        className="mt-1"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="category">Business Category *</Label>
-                      <Select
-                        value={businessData.category}
-                        onValueChange={(value) => updateBusinessData("category", value)}
-                      >
-                        <SelectTrigger className="mt-1">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Business Platform">Business Platform</SelectItem>
-                          <SelectItem value="Technology">Technology</SelectItem>
-                          <SelectItem value="Retail">Retail</SelectItem>
-                          <SelectItem value="Food & Beverage">Food & Beverage</SelectItem>
-                          <SelectItem value="Healthcare">Healthcare</SelectItem>
-                          <SelectItem value="Education">Education</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            <div>
-              <div className="sticky top-6">
-                <div className="flex items-center space-x-2 mb-4">
-                  <div className="w-2 h-2 bg-purple-600 rounded-full"></div>
-                  <h3 className="font-semibold">Business Preview</h3>
-                </div>
-                {renderBusinessPreview()}
-              </div>
-            </div>
-          </div>
+          <StepBusinessInfo
+            businessData={businessData}
+            updateBusinessData={updateBusinessData}
+            renderBusinessPreview={renderBusinessPreview}
+          />
         )
-
       case 1:
         return (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2">
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center space-x-2 mb-6">
-                    <Clock className="w-5 h-5 text-purple-600" />
-                    <h2 className="text-lg font-semibold">Business Hours & Availability</h2>
-                  </div>
-                  <p className="text-gray-600 mb-6">When are you open?</p>
-
-                  <div className="space-y-6">
-                    <div>
-                      <Label className="text-sm font-medium">Days Open *</Label>
-                      <div className="grid grid-cols-7 gap-2 mt-2">
-                        {DAYS.map((day) => (
-                          <Button
-                            key={day}
-                            variant={businessData.businessHours[day].isOpen ? "default" : "outline"}
-                            size="sm"
-                            className={`h-8 text-xs ${
-                              businessData.businessHours[day].isOpen ? "bg-purple-600 hover:bg-purple-700" : ""
-                            }`}
-                            onClick={() => {
-                              const newHours = { ...businessData.businessHours }
-                              newHours[day].isOpen = !newHours[day].isOpen
-                              updateBusinessData("businessHours", newHours)
-                            }}
-                          >
-                            {day}
-                          </Button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="space-y-4">
-                      <Label className="text-sm font-medium">Optional Toggles:</Label>
-
-                      <div className="flex items-center justify-between p-3 border rounded-lg">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-2 h-2 bg-purple-600 rounded-full"></div>
-                          <span className="text-sm">24/7 Open</span>
-                        </div>
-                        <Switch
-                          checked={businessData.is24x7}
-                          onCheckedChange={(checked) => updateBusinessData("is24x7", checked)}
-                        />
-                      </div>
-
-                      <div className="flex items-center justify-between p-3 border rounded-lg">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-2 h-2 bg-purple-600 rounded-full"></div>
-                          <span className="text-sm">Closed on Public Holidays</span>
-                        </div>
-                        <Switch
-                          checked={businessData.closedOnHolidays}
-                          onCheckedChange={(checked) => updateBusinessData("closedOnHolidays", checked)}
-                        />
-                      </div>
-                    </div>
-
-                    {!businessData.is24x7 && (
-                      <div className="space-y-4">
-                        <Label className="text-sm font-medium">Opening Hours</Label>
-                        {Object.entries(businessData.businessHours).map(([day, hours]) => (
-                          <div key={day} className="flex items-center space-x-4">
-                            <div className="w-16 text-sm font-medium">{day}</div>
-                            {hours.isOpen ? (
-                              <>
-                                <Select
-                                  value={hours.openTime}
-                                  onValueChange={(value) => {
-                                    const newHours = { ...businessData.businessHours }
-                                    newHours[day].openTime = value
-                                    updateBusinessData("businessHours", newHours)
-                                  }}
-                                >
-                                  <SelectTrigger className="w-24">
-                                    <SelectValue />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    {Array.from({ length: 24 }, (_, i) => {
-                                      const hour = i === 0 ? 12 : i > 12 ? i - 12 : i
-                                      const ampm = i < 12 ? "AM" : "PM"
-                                      return (
-                                        <SelectItem key={i} value={`${hour}:00 ${ampm}`}>
-                                          {hour}:00 {ampm}
-                                        </SelectItem>
-                                      )
-                                    })}
-                                  </SelectContent>
-                                </Select>
-                                <span className="text-sm text-gray-500">to</span>
-                                <Select
-                                  value={hours.closeTime}
-                                  onValueChange={(value) => {
-                                    const newHours = { ...businessData.businessHours }
-                                    newHours[day].closeTime = value
-                                    updateBusinessData("businessHours", newHours)
-                                  }}
-                                >
-                                  <SelectTrigger className="w-24">
-                                    <SelectValue />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    {Array.from({ length: 24 }, (_, i) => {
-                                      const hour = i === 0 ? 12 : i > 12 ? i - 12 : i
-                                      const ampm = i < 12 ? "AM" : "PM"
-                                      return (
-                                        <SelectItem key={i} value={`${hour}:00 ${ampm}`}>
-                                          {hour}:00 {ampm}
-                                        </SelectItem>
-                                      )
-                                    })}
-                                  </SelectContent>
-                                </Select>
-                              </>
-                            ) : (
-                              <span className="text-sm text-gray-500">Closed</span>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            <div>
-              <div className="sticky top-6">
-                <div className="flex items-center space-x-2 mb-4">
-                  <div className="w-2 h-2 bg-purple-600 rounded-full"></div>
-                  <h3 className="font-semibold">Hours Preview</h3>
-                </div>
-                {renderBusinessPreview()}
-              </div>
-            </div>
-          </div>
+          <StepHours
+            businessData={businessData}
+            updateBusinessData={updateBusinessData}
+            renderBusinessPreview={renderBusinessPreview}
+          />
         )
-
       case 2:
         return (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2">
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center space-x-2 mb-6">
-                    <Camera className="w-5 h-5 text-purple-600" />
-                    <h2 className="text-lg font-semibold">Media & Business Branding</h2>
-                  </div>
-                  <p className="text-gray-600 mb-6">Add Visuals to Represent Your Business</p>
-
-                  <div className="space-y-8">
-                    <div>
-                      <Label className="text-sm font-medium">Business Logo *</Label>
-                      <p className="text-xs text-gray-500 mb-3">Logo for your business profile</p>
-                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                        <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                        <p className="text-sm text-gray-600">Drop your business logo here to browse</p>
-                        <p className="text-xs text-gray-500 mt-1">Recommended size: 200x200</p>
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label className="text-sm font-medium">Banner Image</Label>
-                      <p className="text-xs text-gray-500 mb-3">Banner image for your business profile</p>
-                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                        <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                        <p className="text-sm text-gray-600">Drop your business banner here to browse</p>
-                        <p className="text-xs text-gray-500 mt-1">Recommended size: 1200x400</p>
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label className="text-sm font-medium">Verified License</Label>
-                      <p className="text-xs text-gray-500 mb-3">Upload your business license</p>
-                      <div className="grid grid-cols-2 gap-4">
-                        <Select>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Document" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="license">Business License</SelectItem>
-                            <SelectItem value="permit">Business Permit</SelectItem>
-                            <SelectItem value="certificate">Certificate</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <Select>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Issued" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="2024">2024</SelectItem>
-                            <SelectItem value="2023">2023</SelectItem>
-                            <SelectItem value="2022">2022</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center mt-3">
-                        <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                        <p className="text-sm text-gray-600">Drop your business license here to browse</p>
-                        <p className="text-xs text-gray-500 mt-1">Recommended size: 1200x800</p>
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label className="text-sm font-medium">Business Starting Days</Label>
-                      <Input className="mt-2" placeholder="Enter starting days" />
-                    </div>
-
-                    <div>
-                      <Label className="text-sm font-medium">Business Gallery</Label>
-                      <p className="text-xs text-gray-500 mb-3">Add photos of your business</p>
-                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                        <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                        <p className="text-sm text-gray-600">Drop your business gallery here to browse</p>
-                        <p className="text-xs text-gray-500 mt-1">Recommended size: 800x600</p>
-                      </div>
-
-                      <div className="grid grid-cols-3 gap-4 mt-4">
-                        {[1, 2, 3, 4, 5, 6].map((i) => (
-                          <div key={i} className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center">
-                            <Camera className="w-6 h-6 text-gray-400" />
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            <div>
-              <div className="sticky top-6">
-                <div className="flex items-center space-x-2 mb-4">
-                  <div className="w-2 h-2 bg-purple-600 rounded-full"></div>
-                  <h3 className="font-semibold">Business Card Preview</h3>
-                </div>
-                <Card className="w-full max-w-sm">
-                  <CardContent className="p-0">
-                    <div className="h-32 bg-gradient-to-r from-blue-500 to-purple-600 rounded-t-lg relative">
-                      <div className="absolute bottom-4 left-4">
-                        <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center">
-                          <Building2 className="w-6 h-6 text-white" />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="p-4">
-                      <h3 className="font-semibold text-sm">{businessData.name}</h3>
-                      <p className="text-xs text-gray-600 mb-3">{businessData.tagline}</p>
-
-                      <div className="space-y-2 text-xs">
-                        <div className="flex items-center space-x-2">
-                          <Star className="w-3 h-3 text-gray-400" />
-                          <span className="font-medium">Business Gallery</span>
-                          <Badge variant="secondary" className="text-xs">
-                            Request
-                          </Badge>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Building2 className="w-3 h-3 text-gray-400" />
-                          <span className="font-medium">Business Info</span>
-                          <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">
-                            Verified
-                          </Badge>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Clock className="w-3 h-3 text-gray-400" />
-                          <span className="font-medium">Opening Hours</span>
-                          <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">
-                            Available
-                          </Badge>
-                        </div>
-                      </div>
-
-                      <div className="mt-4 p-2 bg-purple-50 rounded text-xs text-purple-700">
-                        Upload your business card and logo, banner, and gallery to make your business profile more
-                        attractive to customers.
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <div className="mt-6">
-                  <h4 className="font-semibold text-sm mb-3">Business Gallery</h4>
-                  <div className="grid grid-cols-2 gap-2">
-                    {[1, 2, 3, 4].map((i) => (
-                      <div key={i} className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center">
-                        <Camera className="w-4 h-4 text-gray-400" />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <StepMediaBranding
+            businessData={businessData}
+            updateBusinessData={updateBusinessData}
+            renderBusinessPreview={renderBusinessPreview}
+          />
         )
-
       case 3:
         return (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2">
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center space-x-2 mb-6">
-                    <MapPin className="w-5 h-5 text-purple-600" />
-                    <h2 className="text-lg font-semibold">Location & Contact</h2>
-                  </div>
-                  <p className="text-gray-600 mb-6">Where is your business located?</p>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <Label htmlFor="streetAddress">Street Address *</Label>
-                      <Input
-                        id="streetAddress"
-                        value={businessData.streetAddress}
-                        onChange={(e) => updateBusinessData("streetAddress", e.target.value)}
-                        className="mt-1"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="houseInfo">House / Road Info *</Label>
-                      <Input
-                        id="houseInfo"
-                        value={businessData.houseInfo}
-                        onChange={(e) => updateBusinessData("houseInfo", e.target.value)}
-                        className="mt-1"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="localArea">Local Area *</Label>
-                      <Input
-                        id="localArea"
-                        value={businessData.localArea}
-                        onChange={(e) => updateBusinessData("localArea", e.target.value)}
-                        className="mt-1"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="city">City *</Label>
-                      <Input
-                        id="city"
-                        value={businessData.city}
-                        onChange={(e) => updateBusinessData("city", e.target.value)}
-                        className="mt-1"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="postalCode">Postal Code *</Label>
-                      <Input
-                        id="postalCode"
-                        value={businessData.postalCode}
-                        onChange={(e) => updateBusinessData("postalCode", e.target.value)}
-                        className="mt-1"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="country">Country *</Label>
-                      <Select
-                        value={businessData.country}
-                        onValueChange={(value) => updateBusinessData("country", value)}
-                      >
-                        <SelectTrigger className="mt-1">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Bangladesh">Bangladesh</SelectItem>
-                          <SelectItem value="India">India</SelectItem>
-                          <SelectItem value="Pakistan">Pakistan</SelectItem>
-                          <SelectItem value="United States">United States</SelectItem>
-                          <SelectItem value="United Kingdom">United Kingdom</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="mobile">Mobile Number *</Label>
-                      <Input
-                        id="mobile"
-                        value={businessData.mobile}
-                        onChange={(e) => updateBusinessData("mobile", e.target.value)}
-                        className="mt-1"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="website">Website URL (Optional)</Label>
-                      <Input
-                        id="website"
-                        value={businessData.website}
-                        onChange={(e) => updateBusinessData("website", e.target.value)}
-                        className="mt-1"
-                      />
-                    </div>
-
-                    <div className="md:col-span-2">
-                      <Label htmlFor="facebook">Facebook Page (Optional)</Label>
-                      <Input
-                        id="facebook"
-                        value={businessData.facebook}
-                        onChange={(e) => updateBusinessData("facebook", e.target.value)}
-                        className="mt-1"
-                      />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            <div>
-              <div className="sticky top-6">
-                <div className="flex items-center space-x-2 mb-4">
-                  <div className="w-2 h-2 bg-purple-600 rounded-full"></div>
-                  <h3 className="font-semibold">Location Preview</h3>
-                </div>
-                {renderBusinessPreview()}
-              </div>
-            </div>
-          </div>
+          <StepLocationContact
+            businessData={businessData}
+            updateBusinessData={updateBusinessData}
+            renderBusinessPreview={renderBusinessPreview}
+          />
         )
-
       case 4:
         return (
           <div className="text-center py-16">
@@ -802,9 +306,23 @@ export function BusinessSetupWizard() {
             <p className="text-gray-600">We'll notify you once it goes live on our platform.</p>
           </div>
         )
-
       default:
         return null
+    }
+  }
+
+  const submitBusiness = async () => {
+    try {
+      const response = await fetch("/api/business/setup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(businessData),
+      })
+      if (!response.ok) {
+        console.error("Failed to submit business data")
+      }
+    } catch (error) {
+      console.error("Error submitting business data", error)
     }
   }
 
