@@ -6,8 +6,10 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Building2 } from "lucide-react"
+import { Building2, Tag } from "lucide-react"
 import { JSX } from "react"
+import  { TiptapEditor } from "@/components/ui/texteditor"
+import { Button } from "@/components/ui/button"
 
 interface StepProps {
   businessData: BusinessData
@@ -31,7 +33,11 @@ export function StepBusinessInfo({ businessData, updateBusinessData, renderBusin
               <div>
                 {/* <Label htmlFor="businessName">Business Name *</Label> */}
                 <Input
-                width="100%"
+                  placeholderIcon={Building2}
+                  label="Business Name"
+                  required
+                  width="100%"
+                  placeholder="Enter your business name"
                   id="businessName"
                   value={businessData.name}
                   onChange={(e) => updateBusinessData("name", e.target.value)}
@@ -40,36 +46,46 @@ export function StepBusinessInfo({ businessData, updateBusinessData, renderBusin
               </div>
 
               <div>
-                <Label htmlFor="tagline">Tagline *</Label>
-                <div className="flex justify-between items-center mb-1">
-                  <span></span>
-                  <span className="text-xs text-gray-500">{businessData.tagline.length}/100 characters</span>
-                </div>
-                <Input
+
+                <Textarea
+                  placeholderIcon={Tag}
+                  label="Tagline"
+                  required
                   id="tagline"
                   value={businessData.tagline}
                   onChange={(e) => updateBusinessData("tagline", e.target.value)}
-                  maxLength={100}
+                  maxLength={150}
+                  rows={2}
                   className="mt-1"
+                  placeholder="Brief description of your business"
                 />
-              </div>
-
-              <div>
-                <Label htmlFor="about">About *</Label>
                 <div className="flex justify-between items-center mb-1">
                   <span></span>
-                  <span className="text-xs text-gray-500">{businessData.about.length}/1000 characters</span>
+                  <span className="text-xs text-gray-500">{businessData.tagline.length}/150 characters</span>
                 </div>
+              </div>
+
+              {/* <div>
+                
                 <Textarea
+                  label="About"
+                  required
                   id="about"
                   value={businessData.about}
                   onChange={(e) => updateBusinessData("about", e.target.value)}
-                  maxLength={1000}
-                  rows={6}
+                  maxLength={5000}
+                  rows={8}
+                  placeholder="Tell us about your business"
                   className="mt-1"
                 />
-              </div>
-
+                <div className="flex justify-between items-center mb-1">
+                  <span></span>
+                  <span className="text-xs text-[#6F6D71]">{businessData.about.length}/5000 characters</span>
+                </div>
+              </div> */}
+<main className="">
+      <TiptapEditor label="About" required id="about" placeholder="Detailed description of your business, services, and what makes you unique..." />
+    </main>
               <div>
                 <Label htmlFor="startingDate">Business Starting Date *</Label>
                 <Input
@@ -99,6 +115,9 @@ export function StepBusinessInfo({ businessData, updateBusinessData, renderBusin
             </div>
           </div>
         </div>
+         <Button variant="submit" className="w-full mt-8 cursor-pointer">
+                      Next
+                    </Button>
       </div>
 
       <div>

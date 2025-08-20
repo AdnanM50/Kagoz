@@ -1,18 +1,41 @@
 import * as React from "react"
-
+import { LucideIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
-  return (
-    <textarea
-      data-slot="textarea"
-      className={cn(
-        "border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-        className
-      )}
-      {...props}
-    />
-  )
+interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+  label?: string
+  placeholderIcon?: LucideIcon
+  required?: boolean
 }
+
+const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
+  ({ className, label, placeholderIcon: PlaceholderIcon, required, ...props }, ref) => {
+    return (
+      <div className="space-y-1 w-full">
+        {label && (
+          <label className="common-text !text-start text-[#111827] flex items-center">
+            {label}
+            {required && <span className="ml-1 text-red-600">*</span>}
+          </label>
+        )}
+        <div className="flex items-center border rounded-[8px] px-3 py-2 !mt-2 bg-transparent">
+          {PlaceholderIcon && <PlaceholderIcon className="size-5 text-[#949494] mr-2" />}
+          <textarea
+            ref={ref}
+            placeholder={props.placeholder}
+            required={required}
+            className={cn(
+              "w-full outline-none bg-transparent text-base placeholder:text-[#949494] resize-none",
+              className
+            )}
+            {...props}
+          />
+        </div>
+      </div>
+    )
+  }
+)
+
+Textarea.displayName = "Textarea"
 
 export { Textarea }

@@ -8,10 +8,13 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   icon?: LucideIcon
   error?: string
   width?: string
+  height?: string // added height prop
+  placeholderIcon?: LucideIcon 
+  required?: boolean
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type = "text", label, icon: Icon, error, width, ...props }, ref) => {
+  ({ className, type = "text", label, icon: Icon, error, width, height, placeholderIcon: PlaceholderIcon, required, ...props }, ref) => {
     const [mounted, setMounted] = React.useState(false)
     const [showPassword, setShowPassword] = React.useState(false)
 
@@ -25,34 +28,41 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       )
     }
 
-    // Determine max-width class
-    const maxWidthClass = width ? `max-w-[${width}]` : "!max-w-[368px]"
+  // Determine max-width and max-height class
+  const maxWidthClass = width ? `max-w-[${width}]` : "!max-w-[368px]"
+  const maxHeightClass = height ? `h-[${height}]` : ""
 
     const isPassword = type === "password"
     const inputType = isPassword && showPassword ? "text" : type
 
     return (
-      <div className={`space-y-1 ${maxWidthClass}`}>
+      <div className={`space-y-1 ${maxWidthClass} ${maxHeightClass}`}>
         {label && (
-          <label className="common-text !text-start text-[#111827]">{label}</label>
+          <label className="common-text !text-start text-[#111827] flex items-center">
+            {label}
+            {required && <span className="ml-1 text-red-600">*</span>}
+          </label>
         )}
-
         <div
           className={cn(
             "flex items-center border rounded-[8px] px-3 py-2 !mt-2 bg-transparent",
             error ? "border-[#DC3545]" : "border-[#E4E4E4]",
             maxWidthClass,
+            maxHeightClass,
             className
-          )}
-        >
+          )}>
+  
           {Icon && <Icon className="size-5 text-[#949494] mr-2" />}
+          {PlaceholderIcon && <PlaceholderIcon className="size-5 text-[#949494] mr-2" />}
           <input
             ref={ref}
             type={inputType}
             defaultValue={props.defaultValue}
             placeholder={props.placeholder}
+            required={required}
             className={cn(
-              "w-full outline-none bg-transparent h-7 text-base placeholder:text-[#949494]"
+              "w-full outline-none bg-transparent text-base placeholder:text-[#949494]",
+              height ? `max-h-[${height}]` : "h-7"
             )}
             {...props}
           />

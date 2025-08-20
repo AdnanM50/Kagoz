@@ -169,19 +169,19 @@ const renderProgressBar = () => (
 )
 
   const renderBusinessPreview = () => (
-    <Card className="w-full max-w-sm">
-      <CardContent className="p-4">
-        <div className="flex items-center space-x-3 mb-4">
-          <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center">
-            <Building2 className="w-6 h-6 text-white" />
+    <div className="w-full border border-[#E4E4E4] rounded-2xl">
+      <div className="p-4">
+          <div className="flex items-center space-x-3 mb-4 bg-gradient-to-r border border-[#CCFBF1] rounded-[12px] px-4 py-[20px] from-[#F0FDFA] to-[#FAF5FF]">
+            <div className="size-16 basis-16 shrink-0 bg-purple-600 rounded-lg flex items-center justify-center">
+              <Building2 className="size-8 text-white" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="font-semibold text-sm truncate">{businessData.name}</h3>
+              <p className="text-xs text-gray-600 break-words">{businessData.tagline}</p>
+            </div>
           </div>
-          <div>
-            <h3 className="font-semibold text-sm">{businessData.name}</h3>
-            <p className="text-xs text-gray-600">{businessData.tagline}</p>
-          </div>
-        </div>
 
-        <div className="space-y-3 text-xs">
+        <div className="space-y-6 text-xs">
           <div className="flex items-start space-x-2">
             <Building2 className="w-3 h-3 text-gray-400 mt-0.5" />
             <div>
@@ -276,12 +276,12 @@ const renderProgressBar = () => (
           )}
         </div>
 
-        <div className="mt-4 p-2 bg-purple-50 rounded text-xs text-purple-700">
+        <div className="mt-4 py-3 px-5 rounded-[8px] bg-[#F9FAFB] border-l-[4px] border-[#6F00FF]  text-xs text-[#717684]">
           This preview shows how your business {currentStep < 3 ? "hours will appear" : "information will appear"} to
           customers. Make sure all {currentStep < 3 ? "times" : "details"} are accurate.
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 
   const renderStep = () => {
@@ -358,7 +358,7 @@ const renderProgressBar = () => (
 
         {currentStep < STEPS.length - 1 && (
           <div className="flex justify-between mt-8">
-            <Button
+            {/* <Button
               variant="outline"
               onClick={prevStep}
               disabled={currentStep === 0}
@@ -366,12 +366,12 @@ const renderProgressBar = () => (
             >
               <ChevronLeft className="w-4 h-4" />
               <span>Previous</span>
-            </Button>
+            </Button> */}
 
-            <Button onClick={nextStep} className="bg-purple-600 hover:bg-purple-700 flex items-center space-x-2">
+            {/* <Button onClick={nextStep} className="bg-purple-600 w-full hover:bg-purple-700 flex items-center space-x-2">
               <span>Next</span>
               <ChevronRight className="w-4 h-4" />
-            </Button>
+            </Button> */}
           </div>
         )}
       </div>
