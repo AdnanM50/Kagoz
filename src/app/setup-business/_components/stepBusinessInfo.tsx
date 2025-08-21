@@ -10,6 +10,7 @@ import { Building2, Tag } from "lucide-react"
 import { JSX } from "react"
 import  { TiptapEditor } from "@/components/ui/texteditor"
 import { Button } from "@/components/ui/button"
+import BusinessStartDate from "@/components/ui/date-selector"
 
 interface StepProps {
   businessData: BusinessData
@@ -31,7 +32,6 @@ export function StepBusinessInfo({ businessData, updateBusinessData, renderBusin
 
             <div className="space-y-6">
               <div>
-                {/* <Label htmlFor="businessName">Business Name *</Label> */}
                 <Input
                   placeholderIcon={Building2}
                   label="Business Name"
@@ -65,40 +65,36 @@ export function StepBusinessInfo({ businessData, updateBusinessData, renderBusin
                 </div>
               </div>
 
-              {/* <div>
-                
-                <Textarea
-                  label="About"
-                  required
-                  id="about"
-                  value={businessData.about}
-                  onChange={(e) => updateBusinessData("about", e.target.value)}
-                  maxLength={5000}
-                  rows={8}
-                  placeholder="Tell us about your business"
-                  className="mt-1"
-                />
-                <div className="flex justify-between items-center mb-1">
-                  <span></span>
-                  <span className="text-xs text-[#6F6D71]">{businessData.about.length}/5000 characters</span>
-                </div>
-              </div> */}
-<main className="">
-      <TiptapEditor label="About" required id="about" placeholder="Detailed description of your business, services, and what makes you unique..." />
-    </main>
+              
+<div className="">
+      <TiptapEditor label="About" value={businessData.about}
+                  onChange={(e) => updateBusinessData("about", e)}  required id="about" placeholder="Detailed description of your business, services, and what makes you unique..." />
+    </div>
               <div>
-                <Label htmlFor="startingDate">Business Starting Date *</Label>
+                {/* <Label htmlFor="startingDate">Business Starting Date *</Label>
                 <Input
                   id="startingDate"
                   value={businessData.startingDate}
                   onChange={(e) => updateBusinessData("startingDate", e.target.value)}
                   className="mt-1"
-                />
+                /> */}
+                      <BusinessStartDate
+                        id="startingDate"
+                        label="Business Starting Date"
+                        required
+                        value={
+                          typeof businessData.startingDate === "string"
+                            ? { year: "", month: "", day: "" }
+                            : businessData.startingDate
+                        }
+                        onChange={e => updateBusinessData("startingDate", e)}
+                      />
+
               </div>
 
               <div>
                 <Label htmlFor="category">Business Category *</Label>
-                <Select value={businessData.category} onValueChange={(value) => updateBusinessData("category", value)}>
+                <Select  value={businessData.category} onValueChange={(value) => updateBusinessData("category", value)}>
                   <SelectTrigger className="mt-1">
                     <SelectValue />
                   </SelectTrigger>

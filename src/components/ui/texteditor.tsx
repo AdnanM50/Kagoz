@@ -12,7 +12,8 @@ export function TiptapEditor({
   required = false,
   id = "about",
   placeholder = "Detailed description of your business, services, and what makes you unique...",
-  placeholderIcon = "/icons/searchicon.png"
+  value = "",
+  onChange = (html: string) => {},
 }) {
   const [characterCount, setCharacterCount] = useState(0)
   const maxLength = 5000
@@ -27,11 +28,14 @@ export function TiptapEditor({
         },
       }),
     ],
-    content: "",
+  content: value,
     immediatelyRender: false,
     onUpdate: ({ editor }) => {
       const text = editor.getText()
       setCharacterCount(text.length)
+      if (onChange) {
+        onChange(editor.getHTML())
+      }
     },
     editorProps: {
       attributes: {
