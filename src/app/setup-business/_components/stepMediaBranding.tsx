@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge"
 import { Building2, Camera, Clock, Star, Upload } from "lucide-react"
 import { JSX } from "react"
+import ImageUploader from "@/components/ui/file-upload"
 
 interface StepProps {
   businessData: BusinessData
@@ -19,8 +20,8 @@ export function StepMediaBranding({ businessData, updateBusinessData }: StepProp
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <div className="lg:col-span-2">
-        <Card>
-          <CardContent className="p-6">
+        <div>
+          <div className="">
             <div className="flex items-center space-x-2 mb-6">
               <Camera className="w-5 h-5 text-purple-600" />
               <h2 className="text-lg font-semibold">Media & Business Branding</h2>
@@ -28,7 +29,7 @@ export function StepMediaBranding({ businessData, updateBusinessData }: StepProp
             <p className="text-gray-600 mb-6">Add Visuals to Represent Your Business</p>
 
             <div className="space-y-8">
-              <div>
+              {/* <div>
                 <Label className="text-sm font-medium">Business Logo *</Label>
                 <p className="text-xs text-gray-500 mb-3">Logo for your business profile</p>
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
@@ -36,9 +37,11 @@ export function StepMediaBranding({ businessData, updateBusinessData }: StepProp
                   <p className="text-sm text-gray-600">Drop your business logo here to browse</p>
                   <p className="text-xs text-gray-500 mt-1">Recommended size: 200x200</p>
                 </div>
-              </div>
+              </div> */}
+              <ImageUploader />
+              <ImageUploader />
 
-              <div>
+              {/* <div>
                 <Label className="text-sm font-medium">Banner Image</Label>
                 <p className="text-xs text-gray-500 mb-3">Banner image for your business profile</p>
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
@@ -46,13 +49,13 @@ export function StepMediaBranding({ businessData, updateBusinessData }: StepProp
                   <p className="text-sm text-gray-600">Drop your business banner here to browse</p>
                   <p className="text-xs text-gray-500 mt-1">Recommended size: 1200x400</p>
                 </div>
-              </div>
+              </div> */}
 
               <div>
                 <Label className="text-sm font-medium">Verified License</Label>
                 <p className="text-xs text-gray-500 mb-3">Upload your business license</p>
                 <div className="grid grid-cols-2 gap-4">
-                  <Select>
+                  {/* <Select>
                     <SelectTrigger>
                       <SelectValue placeholder="Document" />
                     </SelectTrigger>
@@ -61,8 +64,8 @@ export function StepMediaBranding({ businessData, updateBusinessData }: StepProp
                       <SelectItem value="permit">Business Permit</SelectItem>
                       <SelectItem value="certificate">Certificate</SelectItem>
                     </SelectContent>
-                  </Select>
-                  <Select>
+                  </Select> */}
+                  {/* <Select>
                     <SelectTrigger>
                       <SelectValue placeholder="Issued" />
                     </SelectTrigger>
@@ -71,7 +74,7 @@ export function StepMediaBranding({ businessData, updateBusinessData }: StepProp
                       <SelectItem value="2023">2023</SelectItem>
                       <SelectItem value="2022">2022</SelectItem>
                     </SelectContent>
-                  </Select>
+                  </Select> */}
                 </div>
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center mt-3">
                   <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
@@ -103,8 +106,8 @@ export function StepMediaBranding({ businessData, updateBusinessData }: StepProp
                 </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
 
       <div>

@@ -358,7 +358,7 @@ const renderProgressBar = () => (
 
         {currentStep < STEPS.length - 1 && (
           <div className="flex justify-between mt-8">
-            {/* <Button
+            <Button
               variant="outline"
               onClick={prevStep}
               disabled={currentStep === 0}
@@ -366,12 +366,12 @@ const renderProgressBar = () => (
             >
               <ChevronLeft className="w-4 h-4" />
               <span>Previous</span>
-            </Button> */}
+            </Button>
 
-            {/* <Button onClick={nextStep} className="bg-purple-600 w-full hover:bg-purple-700 flex items-center space-x-2">
+            <Button onClick={nextStep} className="bg-purple-600  hover:bg-purple-700 flex items-center space-x-2">
               <span>Next</span>
               <ChevronRight className="w-4 h-4" />
-            </Button> */}
+            </Button>
           </div>
         )}
       </div>

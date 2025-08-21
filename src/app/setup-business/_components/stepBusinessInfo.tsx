@@ -111,9 +111,9 @@ export function StepBusinessInfo({ businessData, updateBusinessData, renderBusin
             </div>
           </div>
         </div>
-         <Button variant="submit" className="w-full mt-8 cursor-pointer">
+         {/* <Button variant="submit" className="w-full mt-8 cursor-pointer">
                       Next
-                    </Button>
+                    </Button> */}
       </div>
 
       <div>
