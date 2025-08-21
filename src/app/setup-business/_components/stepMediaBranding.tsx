@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { Building2, Camera, Clock, Star, Upload } from "lucide-react"
+import { JSX } from "react"
 
 interface StepProps {
   businessData: BusinessData
