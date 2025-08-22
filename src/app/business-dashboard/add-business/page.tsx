@@ -1,31 +1,121 @@
 "use client"
 
 import { useState } from "react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Upload, Plus, Trash2 } from "lucide-react"
+import { useRouter } from "next/navigation"
+import BusinessInfoStep from "./_components/BusinessInfoStep"
+import LocationContactStep from "./_components/LocationContactStep"
+import BusinessHoursStep from "./_components/BusinessHoursStep"
+import MediaBrandingStep from "./_components/MediaBrandingStep"
 
 const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-const dayAbbr = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+
+interface BusinessInfoData {
+  businessName: string
+  tagline: string
+  about: string
+  startYear: string
+  startMonth: string
+  startDay: string
+  category: string
+}
+
+interface LocationContactData {
+  streetAddress: string
+  houseRoad: string
+  localArea: string
+  city: string
+  postalCode: string
+  country: string
+  mobile: string
+  website: string
+  facebook: string
+}
+
+interface TimeSlot {
+  start: string
+  end: string
+}
+
+interface DaySchedule {
+  isOpen: boolean
+  slots: TimeSlot[]
+}
+
+interface BusinessHoursData {
+  is24Hours: boolean
+  closedOnHolidays: boolean
+  businessHours: Record<string, DaySchedule>
+}
+
+interface UploadedFile {
+  id: string
+  file: File
+  preview: string
+  name: string
+  size: string
+}
+
+interface MediaBrandingData {
+  logo: UploadedFile | null
+  banner: UploadedFile | null
+  gallery: UploadedFile[]
+}
+
+interface FormData {
+  businessInfo: BusinessInfoData
+  locationContact: LocationContactData
+  businessHours: BusinessHoursData
+  mediaBranding: MediaBrandingData
+}
 
 export default function AddBusiness() {
+  const router = useRouter()
   const [currentTab, setCurrentTab] = useState(0)
-  const [businessHours, setBusinessHours] = useState(
-    days.reduce(
-      (acc, day) => {
-        acc[day] = {
-          isOpen: day !== "Sunday",
-          slots: [{ start: "9:00 AM", end: "6:00 PM" }],
-        }
-        return acc
-      },
-      {} as Record<string, { isOpen: boolean; slots: { start: string; end: string }[] }>,
-    ),
-  )
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [formData, setFormData] = useState<FormData>({
+    businessInfo: {
+      businessName: "Kagoz.com",
+      tagline: "KAGOZ stands out by offering both free and premium listing options to cater to the diverse needs of businesses.",
+      about: "KAGOZ stands out by offering both free and premium listing options to cater to the diverse needs of businesses. Whether you are a startup or an established enterprise, our platform provides a comprehensive solution to showcase your services and reach potential customers. Free & Easy Listings: A simple, straightforward process to get businesses listed at no cost. Verified and Trusted Information: Each business listing undergoes verification to ensure accuracy and reliability. User-Friendly Search Experience: Advanced search features allow users to find businesses by category, name, or location.",
+      startYear: "2025",
+      startMonth: "july",
+      startDay: "12",
+      category: "platform"
+    },
+    locationContact: {
+      streetAddress: "123/A, Mohammadia Ltd",
+      houseRoad: "Road 7, House 22",
+      localArea: "Mohammadpur",
+      city: "Dhaka",
+      postalCode: "1207",
+      country: "Bangladesh",
+      mobile: "+8801712345678",
+      website: "https://www.kagoz.com",
+      facebook: "https://facebook.com/kagoz"
+    },
+    businessHours: {
+      is24Hours: false,
+      closedOnHolidays: true,
+      businessHours: days.reduce(
+        (acc, day) => {
+          acc[day] = {
+            isOpen: day !== "Friday",
+            slots: day === "Monday" ? [
+              { start: "9:00 AM", end: "1:00 PM" },
+              { start: "2:00 PM", end: "6:00 PM" }
+            ] : [{ start: "9:00 AM", end: "6:00 PM" }],
+          }
+          return acc
+        },
+        {} as Record<string, DaySchedule>,
+      ),
+    },
+    mediaBranding: {
+      logo: null,
+      banner: null,
+      gallery: []
+    }
+  })
 
   const tabs = [
     "Business Information",
@@ -34,387 +124,167 @@ export default function AddBusiness() {
     "Media & Business Branding",
   ]
 
-  const addTimeSlot = (day: string) => {
-    setBusinessHours((prev) => ({
-      ...prev,
-      [day]: {
-        ...prev[day],
-        slots: [...prev[day].slots, { start: "9:00 AM", end: "6:00 PM" }],
-      },
-    }))
+  const updateBusinessInfo = (data: BusinessInfoData) => {
+    setFormData(prev => ({ ...prev, businessInfo: data }))
   }
 
-  const removeTimeSlot = (day: string, index: number) => {
-    setBusinessHours((prev) => ({
-      ...prev,
-      [day]: {
-        ...prev[day],
-        slots: prev[day].slots.filter((_, i) => i !== index),
-      },
-    }))
+  const updateLocationContact = (data: LocationContactData) => {
+    setFormData(prev => ({ ...prev, locationContact: data }))
   }
 
-  const toggleDay = (day: string) => {
-    setBusinessHours((prev) => ({
-      ...prev,
-      [day]: {
-        ...prev[day],
-        isOpen: !prev[day].isOpen,
-      },
-    }))
+  const updateBusinessHours = (data: BusinessHoursData) => {
+    setFormData(prev => ({ ...prev, businessHours: data }))
+  }
+
+  const updateMediaBranding = (data: MediaBrandingData) => {
+    setFormData(prev => ({ ...prev, mediaBranding: data }))
+  }
+
+  const handleNext = () => {
+    if (currentTab < tabs.length - 1) {
+      setCurrentTab(currentTab + 1)
+    }
+  }
+
+  const handleBack = () => {
+    if (currentTab > 0) {
+      setCurrentTab(currentTab - 1)
+    }
+  }
+
+  const handleSubmit = async () => {
+    setIsSubmitting(true)
+    
+    try {
+      // Create FormData for file uploads
+      const submitData = new FormData()
+      
+      // Add business info
+      submitData.append('businessInfo', JSON.stringify(formData.businessInfo))
+      
+      // Add location contact
+      submitData.append('locationContact', JSON.stringify(formData.locationContact))
+      
+      // Add business hours
+      submitData.append('businessHours', JSON.stringify(formData.businessHours))
+      
+      // Add media files
+      if (formData.mediaBranding.logo) {
+        submitData.append('logo', formData.mediaBranding.logo.file)
+      }
+      if (formData.mediaBranding.banner) {
+        submitData.append('banner', formData.mediaBranding.banner.file)
+      }
+      formData.mediaBranding.gallery.forEach((file, index) => {
+        submitData.append(`gallery_${index}`, file.file)
+      })
+
+      // Make API call
+      const response = await fetch('/api/businesses', {
+        method: 'POST',
+        body: submitData,
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to create business')
+      }
+
+      const result = await response.json()
+      
+      // Redirect to business dashboard
+      router.push('/business-dashboard')
+      
+    } catch (error) {
+      console.error('Error creating business:', error)
+      alert('Failed to create business. Please try again.')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const renderCurrentStep = () => {
+    switch (currentTab) {
+      case 0:
+        return (
+          <BusinessInfoStep
+            data={formData.businessInfo}
+            onUpdate={updateBusinessInfo}
+            onNext={handleNext}
+          />
+        )
+      case 1:
+        return (
+          <LocationContactStep
+            data={formData.locationContact}
+            onUpdate={updateLocationContact}
+            onNext={handleNext}
+            onBack={handleBack}
+          />
+        )
+      case 2:
+        return (
+          <BusinessHoursStep
+            data={formData.businessHours}
+            onUpdate={updateBusinessHours}
+            onNext={handleNext}
+            onBack={handleBack}
+          />
+        )
+      case 3:
+        return (
+          <MediaBrandingStep
+            data={formData.mediaBranding}
+            onUpdate={updateMediaBranding}
+            onBack={handleBack}
+            onSubmit={handleSubmit}
+          />
+        )
+      default:
+        return null
+    }
   }
 
   return (
-    <main className="p-4 lg:p-8">
-      <div className="max-w-4xl mx-auto">
+    <main className="min-h-screen bg-gray-50 p-4 lg:p-8">
+      <div className="w-full mx-auto">
         {/* Page header */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Edit Business</h1>
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-gray-900">Edit Business</h1>
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex flex-wrap gap-1 mb-8">
-          {tabs.map((tab, index) => (
-            <Button
-              key={tab}
-              variant={currentTab === index ? "default" : "outline"}
-              className={`text-sm px-4 py-2 ${
-                currentTab === index
-                  ? "bg-purple-600 hover:bg-purple-700 text-white"
-                  : "text-gray-600 hover:text-gray-900 bg-white"
-              }`}
-              onClick={() => setCurrentTab(index)}
-            >
-              {tab}
-            </Button>
-          ))}
+        <div className="bg-white rounded-lg shadow-sm border mb-6">
+          <div className="flex flex-wrap">
+            {tabs.map((tab, index) => (
+              <button
+                key={tab}
+                className={`flex-1 min-w-0 px-4 py-3 text-sm font-medium transition-colors ${
+                  currentTab === index
+                    ? "bg-purple-600 text-white"
+                    : "text-gray-600 hover:text-gray-900 bg-white"
+                } ${index === 0 ? "rounded-l-lg" : ""} ${index === tabs.length - 1 ? "rounded-r-lg" : ""}`}
+                onClick={() => setCurrentTab(index)}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Tab Content */}
         <div className="bg-white rounded-lg shadow-sm border p-6 lg:p-8">
-          {/* Business Information Tab */}
-          {currentTab === 0 && (
-            <div className="space-y-6">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-5 h-5 bg-purple-600 rounded flex items-center justify-center">
-                  <div className="w-2 h-2 bg-white rounded-sm"></div>
-                </div>
-                <h3 className="text-lg font-semibold">Business Information</h3>
-              </div>
-              <p className="text-gray-600 mb-6">Tell us about your business</p>
-
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="businessName">Business Name *</Label>
-                  <Input id="businessName" placeholder="Kagoz.com" className="mt-1" />
-                </div>
-
-                <div>
-                  <Label htmlFor="tagline">Tagline *</Label>
-                  <Input
-                    id="tagline"
-                    placeholder="KAGOZ stands out by offering both free and premium listing options to cater to the diverse needs of businesses."
-                    className="mt-1"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">140/150 characters</p>
-                </div>
-
-                <div>
-                  <Label htmlFor="about">About *</Label>
-                  <Textarea
-                    id="about"
-                    placeholder="KAGOZ stands out by offering both free and premium listing options to cater to the diverse needs of businesses. Whether you are a startup or established enterprise, our platform provides a comprehensive solution to showcase your services and reach potential customers. Free & Easy Listings: A simple, straightforward process to get businesses listed at no cost. Verified and Trusted Information: Each business listing undergoes verification to ensure accuracy and reliability. User-Friendly Search Experience: Advanced search features allow users to find businesses by category, name, or location."
-                    className="mt-1 min-h-[120px]"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">1000/2000 characters</p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="startDate">Business Starting Date *</Label>
-                    <div className="flex gap-2 mt-1">
-                      <Select>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Month" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="july">July</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <Select>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Year" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="2024">2024</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="category">Business Category *</Label>
-                    <Select>
-                      <SelectTrigger className="mt-1">
-                        <SelectValue placeholder="Business Platform" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="platform">Business Platform</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Location & Contact Tab */}
-          {currentTab === 1 && (
-            <div className="space-y-6">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-5 h-5 bg-purple-600 rounded flex items-center justify-center">
-                  <div className="w-2 h-2 bg-white rounded-sm"></div>
-                </div>
-                <h3 className="text-lg font-semibold">Location & Contact</h3>
-              </div>
-              <p className="text-gray-600 mb-6">Where is your business located?</p>
-
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="streetAddress">Street Address *</Label>
-                    <Input id="streetAddress" placeholder="123/A, Mohammadpur Ltd" className="mt-1" />
-                  </div>
-                  <div>
-                    <Label htmlFor="houseRoad">House / Road Info *</Label>
-                    <Input id="houseRoad" placeholder="Road 7, House 23" className="mt-1" />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="localArea">Local Area *</Label>
-                    <Input id="localArea" placeholder="Mohammadpur" className="mt-1" />
-                  </div>
-                  <div>
-                    <Label htmlFor="city">City *</Label>
-                    <Input id="city" placeholder="Dhaka" className="mt-1" />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="postalCode">Postal Code *</Label>
-                    <Input id="postalCode" placeholder="1205" className="mt-1" />
-                  </div>
-                  <div>
-                    <Label htmlFor="country">Country</Label>
-                    <Input id="country" placeholder="Bangladesh" className="mt-1" />
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="mobile">Mobile Number *</Label>
-                  <Input id="mobile" placeholder="+88017234567B" className="mt-1" />
-                </div>
-
-                <div>
-                  <Label htmlFor="website">Website URL (Optional)</Label>
-                  <Input id="website" placeholder="https://www.kagoz.com" className="mt-1" />
-                </div>
-
-                <div>
-                  <Label htmlFor="facebook">Facebook Page (Optional)</Label>
-                  <Input id="facebook" placeholder="https://facebook.com/kagoz" className="mt-1" />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Business Hours Tab */}
-          {currentTab === 2 && (
-            <div className="space-y-6">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-5 h-5 bg-purple-600 rounded flex items-center justify-center">
-                  <div className="w-2 h-2 bg-white rounded-sm"></div>
-                </div>
-                <h3 className="text-lg font-semibold">Business Hours & Availability</h3>
-              </div>
-              <p className="text-gray-600 mb-6">What are you open?</p>
-
-              {/* Day Selection */}
-              <div>
-                <Label className="text-sm font-medium">Days Open *</Label>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {dayAbbr.map((day, index) => (
-                    <Button
-                      key={day}
-                      variant={businessHours[days[index]]?.isOpen ? "default" : "outline"}
-                      size="sm"
-                      className={`px-3 py-1 ${
-                        businessHours[days[index]]?.isOpen
-                          ? "bg-purple-600 hover:bg-purple-700 text-white"
-                          : "text-gray-600"
-                      }`}
-                      onClick={() => toggleDay(days[index])}
-                    >
-                      {day}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Opening Hours */}
-              <div className="space-y-4">
-                <div>
-                  <Label className="text-sm font-medium">Opening Hours</Label>
-                  <div className="flex items-center gap-2 mt-2">
-                    <input type="radio" id="24-7" name="hours" />
-                    <Label htmlFor="24-7" className="text-sm">
-                      24/7 Open
-                    </Label>
-                  </div>
-                  <div className="flex items-center gap-2 mt-1">
-                    <input type="radio" id="custom" name="hours" defaultChecked />
-                    <Label htmlFor="custom" className="text-sm">
-                      Custom Public Holidays
-                    </Label>
-                  </div>
-                  <div className="flex items-center gap-2 mt-1">
-                    <input type="checkbox" id="only-weekends" />
-                    <Label htmlFor="only-weekends" className="text-sm">
-                      Only Open Fridays to All weekdays
-                    </Label>
-                  </div>
-                </div>
-
-                {/* Daily Schedule */}
-                <div className="space-y-4">
-                  {days.map((day) => (
-                    <div key={day} className="space-y-2">
-                      <Label className="text-sm font-medium">{day}</Label>
-                      {businessHours[day]?.isOpen ? (
-                        <div className="space-y-2">
-                          {businessHours[day].slots.map((slot, index) => (
-                            <div key={index} className="flex items-center gap-2">
-                              <span className="text-sm text-gray-600 w-16">Time Slot {index + 1}:</span>
-                              <Select defaultValue={slot.start}>
-                                <SelectTrigger className="w-24">
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="9:00 AM">9:00 AM</SelectItem>
-                                  <SelectItem value="10:00 AM">10:00 AM</SelectItem>
-                                </SelectContent>
-                              </Select>
-                              <span className="text-sm">to</span>
-                              <Select defaultValue={slot.end}>
-                                <SelectTrigger className="w-24">
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="6:00 PM">6:00 PM</SelectItem>
-                                  <SelectItem value="7:00 PM">7:00 PM</SelectItem>
-                                </SelectContent>
-                              </Select>
-                              {businessHours[day].slots.length > 1 && (
-                                <Button variant="ghost" size="sm" onClick={() => removeTimeSlot(day, index)}>
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              )}
-                            </div>
-                          ))}
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="text-purple-600 hover:text-purple-700"
-                            onClick={() => addTimeSlot(day)}
-                          >
-                            <Plus className="h-4 w-4 mr-1" />
-                            Add Another Time Slot
-                          </Button>
-                        </div>
-                      ) : (
-                        <p className="text-sm text-gray-500">Closed</p>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Media & Business Branding Tab */}
-          {currentTab === 3 && (
-            <div className="space-y-6">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-5 h-5 bg-purple-600 rounded flex items-center justify-center">
-                  <div className="w-2 h-2 bg-white rounded-sm"></div>
-                </div>
-                <h3 className="text-lg font-semibold">Media & Business Branding</h3>
-              </div>
-              <p className="text-gray-600 mb-6">Add Visuals to Represent Your Business</p>
-
-              <div className="space-y-6">
-                {/* Business Logo */}
-                <div>
-                  <Label className="text-sm font-medium">Business Logo *</Label>
-                  <p className="text-xs text-gray-500 mb-2">Logo for your business profile</p>
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-purple-400 transition-colors">
-                    <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                    <p className="text-sm text-gray-600">Drop your Image here or click to browse</p>
-                    <p className="text-xs text-gray-500 mt-1">PNG, JPG up to 10MB</p>
-                    <p className="text-xs text-gray-500">Recommended size: 500*500 px</p>
-                  </div>
-                </div>
-
-                {/* Banner Image */}
-                <div>
-                  <Label className="text-sm font-medium">Banner Image</Label>
-                  <p className="text-xs text-gray-500 mb-2">Banner Image for your business profile</p>
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-purple-400 transition-colors">
-                    <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                    <p className="text-sm text-gray-600">Drop your Image here or click to browse</p>
-                    <p className="text-xs text-gray-500 mt-1">PNG, JPG up to 10MB</p>
-                  </div>
-                </div>
-
-                {/* Business Gallery */}
-                <div>
-                  <Label className="text-sm font-medium">Business Gallery</Label>
-                  <p className="text-xs text-gray-500 mb-2">Add gallery images</p>
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-purple-400 transition-colors">
-                    <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                    <p className="text-sm text-gray-600">Drop your Image here or click to browse</p>
-                    <p className="text-xs text-gray-500 mt-1">PNG, JPG up to 10MB</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Action Buttons */}
-          <div className="flex justify-center gap-4 pt-8 border-t mt-8">
-            <Link href="/">
-              <Button
-                variant="outline"
-                className="px-8 py-2 border-blue-600 text-blue-600 hover:bg-blue-50 bg-transparent"
-              >
-                Save & Back to Businesses
-              </Button>
-            </Link>
-            <Button
-              className="px-8 py-2 bg-purple-600 hover:bg-purple-700 text-white"
-              onClick={() => {
-                if (currentTab < tabs.length - 1) {
-                  setCurrentTab(currentTab + 1)
-                }
-              }}
-            >
-              Save & Continue
-            </Button>
-          </div>
+          {renderCurrentStep()}
         </div>
+
+        {/* Loading overlay */}
+        {isSubmitting && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 flex items-center gap-3">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-600"></div>
+              <p className="text-gray-700">Creating your business...</p>
+            </div>
+          </div>
+        )}
       </div>
     </main>
   )
