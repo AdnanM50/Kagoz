@@ -23,11 +23,11 @@ export default function Dashboard() {
 ];
 
 const data = [
-  { name: "Kagoz.com", status: "Pending" },
-  { name: "Arouse Fashion Store", status: "Pending" },
-  { name: "Haji Cloth Store", status: "Active" },
-  { name: "Aarong Eastern Agargaon", status: "Active" },
-  { name: "Fashion Exclusive bd", status: "Active" },
+  { id: 1, name: "Kagoz.com", status: "Pending" },
+  { id: 2,  name: "Arouse Fashion Store", status: "Pending" },
+  { id: 3, name: "Haji Cloth Store", status: "Active" },
+  { id: 4, name: "Aarong Eastern Agargaon", status: "Active" },
+  { id: 5, name: "Fashion Exclusive bd", status: "Active" },
 ];
 const route = useRouter();
   return (
@@ -51,7 +51,7 @@ const route = useRouter();
       + Add Business
     </Button>
   }
-  onEdit={(row) => console.log("edit", row)}
+  onEdit={(row) => route.push(`/business-dashboard/edit-business/${row.id}`)}
   onDelete={(row) => console.log("delete", row)}
   indexed
   pagination

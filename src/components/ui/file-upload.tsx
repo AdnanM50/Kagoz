@@ -1,111 +1,310 @@
 "use client"
 
 import * as React from "react"
-import { X, Upload } from "lucide-react"
+import { X, Upload, Camera } from "lucide-react"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 
-export default function ImageUploader({
-  multiple = true,
-  maxSizeMB = 10,
-}: {
-  multiple?: boolean
+interface UploadedFile {
+  id: string
+  file: File
+  preview: string
+  name: string
+  size: string
+}
+
+interface FileUploaderProps {
+  label?: string
+  description?: string
+  required?: boolean
+  max?: number
   maxSizeMB?: number
-}) {
-  const [files, setFiles] = React.useState<File[]>([])
+  acceptedTypes?: string[]
+  recommendedSize?: string
+  value?: UploadedFile[]
+  onChange?: (files: UploadedFile[]) => void
+  onError?: (error: string) => void
+  className?: string
+}
+
+export default function FileUploader({
+  label = "Upload Files",
+  description,
+  required = false,
+  max = 1,
+  maxSizeMB = 10,
+  acceptedTypes = ["image/png", "image/jpeg", "image/jpg"],
+  recommendedSize,
+  value = [],
+  onChange,
+  onError,
+  className
+}: FileUploaderProps) {
+  const [files, setFiles] = React.useState<UploadedFile[]>(value)
+  const [isDragOver, setIsDragOver] = React.useState(false)
   const fileInputRef = React.useRef<HTMLInputElement | null>(null)
 
-  const handleFiles = (newFiles: FileList | null) => {
-    if (!newFiles) return
-    const validFiles = Array.from(newFiles).filter(
-      (file) => file.size <= maxSizeMB * 1024 * 1024
+  React.useEffect(() => {
+    setFiles(value)
+  }, [value])
+
+  const formatFileSize = (bytes: number): string => {
+    if (bytes === 0) return '0 Bytes'
+    const k = 1024
+    const sizes = ['Bytes', 'KB', 'MB', 'GB']
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+  }
+
+  const createFilePreview = (file: File): Promise<string> => {
+    return new Promise((resolve) => {
+      const reader = new FileReader()
+      reader.onload = (e) => resolve(e.target?.result as string)
+      reader.readAsDataURL(file)
+    })
+  }
+
+  const validateFile = (file: File): string | null => {
+    // Check file size
+    if (file.size > maxSizeMB * 1024 * 1024) {
+      return `File size must be less than ${maxSizeMB}MB`
+    }
+
+    // Check file type
+    if (!acceptedTypes.includes(file.type)) {
+      return `File type not supported. Please upload ${acceptedTypes.join(', ')}`
+    }
+
+    return null
+  }
+
+  const handleFiles = async (fileList: FileList | null) => {
+    if (!fileList) return
+
+    const fileArray = Array.from(fileList)
+    const errors: string[] = []
+    const validFiles: File[] = []
+
+    for (const file of fileArray) {
+      const error = validateFile(file)
+      if (error) {
+        errors.push(`${file.name}: ${error}`)
+      } else {
+        validFiles.push(file)
+      }
+    }
+
+    if (errors.length > 0) {
+      onError?.(errors.join('\n'))
+      return
+    }
+
+    // Check if adding these files would exceed the max limit
+    if (files.length + validFiles.length > max) {
+      onError?.(`Maximum ${max} file${max > 1 ? 's' : ''} allowed`)
+      return
+    }
+
+    const uploadedFiles: UploadedFile[] = []
+    
+    for (const file of validFiles) {
+      const preview = await createFilePreview(file)
+      const uploadedFile: UploadedFile = {
+        id: Math.random().toString(36).substr(2, 9),
+        file,
+        preview,
+        name: file.name,
+        size: formatFileSize(file.size)
+      }
+      uploadedFiles.push(uploadedFile)
+    }
+
+    const updatedFiles = max === 1 ? uploadedFiles : [...files, ...uploadedFiles]
+    setFiles(updatedFiles)
+    onChange?.(updatedFiles)
+  }
+
+  const removeFile = (id: string) => {
+    const newFiles = files.filter(file => file.id !== id)
+    setFiles(newFiles)
+    onChange?.(newFiles)
+  }
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragOver(true)
+  }
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragOver(false)
+  }
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragOver(false)
+    handleFiles(e.dataTransfer.files)
+  }
+
+  const getAcceptedTypesText = () => {
+    const types = acceptedTypes.map(type => {
+      if (type === 'image/png') return 'PNG'
+      if (type === 'image/jpeg' || type === 'image/jpg') return 'JPG'
+      return type.split('/')[1]?.toUpperCase() || type
+    })
+    return types.join(', ')
+  }
+
+  // Single file layout (max = 1)
+  if (max === 1) {
+    return (
+      <div className={cn("space-y-2", className)}>
+        {label && (
+          <Label className="text-sm font-medium text-gray-700">
+            {label} {required && <span className="text-red-500">*</span>}
+          </Label>
+        )}
+        {description && (
+          <p className="text-xs text-gray-500">{description}</p>
+        )}
+
+        {files.length === 0 ? (
+          // Upload area
+          <div
+            className={cn(
+              "border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-center cursor-pointer transition-colors",
+              isDragOver 
+                ? "border-purple-400 bg-purple-50" 
+                : "border-gray-300 hover:border-purple-400 hover:bg-gray-50"
+            )}
+            onClick={() => fileInputRef.current?.click()}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+          >
+            <Upload className="h-8 w-8 text-gray-400 mb-2" />
+            <p className="text-sm text-gray-600">Drop your image here or click to browse</p>
+            <p className="text-xs text-gray-500 mt-1">
+              {getAcceptedTypesText()} up to {maxSizeMB}MB
+            </p>
+            {recommendedSize && (
+              <p className="text-xs text-gray-500">Recommended size: {recommendedSize}</p>
+            )}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept={acceptedTypes.join(',')}
+              className="hidden"
+              onChange={(e) => handleFiles(e.target.files)}
+            />
+          </div>
+        ) : (
+          // File preview (single file)
+          <div className="border border-gray-200 rounded-lg p-4 bg-white">
+            <div className="flex items-center gap-3">
+              <img
+                src={files[0].preview}
+                alt={files[0].name}
+                className="w-12 h-12 object-cover rounded"
+              />
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-900 truncate">
+                  {files[0].name}
+                </p>
+                <p className="text-xs text-gray-500">{files[0].size}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => removeFile(files[0].id)}
+                className="p-1 text-red-500 hover:text-red-700 transition-colors"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     )
-    setFiles(multiple ? [...files, ...validFiles] : [validFiles[0]])
   }
 
-  const removeFile = (index: number) => {
-    setFiles(files.filter((_, i) => i !== index))
-  }
-
+  // Multiple files layout (max > 1)
   return (
-    <div className="flex flex-col gap-2">
-      <Label className="text-sm font-medium">
-        Business Logo <span className="text-red-500">*</span>
-      </Label>
-      <p className="text-xs text-muted-foreground">
-        Logo for your business profile
-      </p>
+    <div className={cn("space-y-2", className)}>
+      {label && (
+        <Label className="text-sm font-medium text-gray-700">
+          {label} {required && <span className="text-red-500">*</span>}
+        </Label>
+      )}
+      {description && (
+        <p className="text-xs text-gray-500">{description}</p>
+      )}
 
-      {/* Dropzone / Browse */}
+      {/* Initial upload area - only shown when no files are uploaded */}
       {files.length === 0 && (
         <div
-          className="border border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-muted/50 transition"
+          className={cn(
+            "border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-center cursor-pointer transition-colors",
+            isDragOver 
+              ? "border-purple-400 bg-purple-50" 
+              : "border-gray-300 hover:border-purple-400 hover:bg-gray-50"
+          )}
           onClick={() => fileInputRef.current?.click()}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
         >
-          <Upload className="h-8 w-8 text-muted-foreground mb-2" />
-          <p className="text-sm">Drop your image here or click to browse</p>
-          <p className="text-xs text-muted-foreground">
-            PNG, JPG up to {maxSizeMB}MB <br />
-            Recommended size: 500×500 px
+          <Camera className="h-8 w-8 text-gray-400 mb-2" />
+          <p className="text-sm text-gray-600">Drop your image here or click to browse</p>
+          <p className="text-xs text-gray-500 mt-1">
+            {getAcceptedTypesText()} up to {maxSizeMB}MB
           </p>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/png,image/jpeg"
-            multiple={multiple}
-            className="hidden"
-            onChange={(e) => handleFiles(e.target.files)}
-          />
         </div>
       )}
 
-      {/* Preview */}
+      {/* Gallery Row with Plus Icon - shown when files exist */}
       {files.length > 0 && (
-        <div
-          className={cn(
-            "grid gap-2 mt-2",
-            multiple
-              ? "grid-cols-2 sm:grid-cols-3 md:grid-cols-4"
-              : "grid-cols-1"
-          )}
-        >
-          {files.map((file, index) => {
-            const url = URL.createObjectURL(file)
-            return (
-              <div
-                key={index}
-                className="relative border rounded-lg overflow-hidden group"
+        <div className="flex gap-3 overflow-x-auto py-3">
+          {files.map((file) => (
+            <div key={file.id} className="relative flex-shrink-0">
+              <img
+                src={file.preview}
+                alt={file.name}
+                className="w-20 h-20 object-cover rounded-lg"
+              />
+              <button
+                type="button"
+                onClick={() => removeFile(file.id)}
+                className="absolute -top-1 -right-1 p-1 bg-red-500 hover:bg-red-600 text-white rounded-full transition-colors"
               >
-                <img
-                  src={url}
-                  alt={file.name}
-                  className={cn(
-                    "object-cover w-full",
-                    multiple ? "h-32" : "h-20"
-                  )}
-                />
-                <div className="absolute top-1 right-1">
-                  <button
-                    type="button"
-                    onClick={() => removeFile(index)}
-                    className="rounded-full bg-black/70 p-1 text-white opacity-0 group-hover:opacity-100 transition"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-                {!multiple && (
-                  <div className="p-2 text-xs">
-                    <p className="truncate">{file.name}</p>
-                    <p className="text-muted-foreground">
-                      {(file.size / (1024 * 1024)).toFixed(2)} MB
-                    </p>
-                  </div>
-                )}
-              </div>
-            )
-          })}
+                <X className="h-3 w-3" />
+              </button>
+            </div>
+          ))}
+          
+          {/* Plus Icon - inline with thumbnails for adding more images */}
+          {files.length < max && (
+            <div
+              className="flex-shrink-0 w-20 h-20 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:border-purple-400 hover:bg-gray-50 transition-colors"
+              onClick={() => fileInputRef.current?.click()}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+            >
+              <span className="text-2xl font-bold text-gray-400">+</span>
+            </div>
+          )}
         </div>
       )}
+
+      {/* Hidden file input - shared between both upload areas */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept={acceptedTypes.join(',')}
+        multiple
+        className="hidden"
+        onChange={(e) => handleFiles(e.target.files)}
+      />
     </div>
   )
 }

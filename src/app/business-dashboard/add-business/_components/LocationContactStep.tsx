@@ -74,12 +74,12 @@ export default function LocationContactStep({ data, onUpdate, onNext, onBack }: 
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2 mb-4">
-        <div className="w-5 h-5 bg-purple-600 rounded flex items-center justify-center">
-          <MapPin className="w-3 h-3 text-white" />
-        </div>
-        <h3 className="text-lg font-semibold">Location & Contact</h3>
+        
+          <MapPin className="size-6 text-[#9333EA]" />
+       
+        <h3 className="auth-heading !font-medium text-[#111827]">Location & Contact</h3>
       </div>
-      <p className="text-gray-600 mb-6">Where is your business located?</p>
+      <p className="text-[#2D3643] Subheading !text-start mb-6">Where is your business located?</p>
 
     <div className="grid grid-cols-2 gap-5">
     <Input 
@@ -187,19 +187,20 @@ export default function LocationContactStep({ data, onUpdate, onNext, onBack }: 
          
       </div>
 
-      <div className="flex justify-between pt-6">
-        <Button
-          variant="outline"
-          className="px-8 py-2 border-blue-600 text-blue-600 hover:bg-blue-50 bg-transparent"
+      <div className="flex gap-10 w-1/2 mx-auto">
+        <button
+         
+          onClick={handleNext}
+          className="!px-20 !py-3 cursor-pointer border-blue-600 text-white lg:whitespace-pre whitespace-normal bg-[#163987]  rounded-lg"
         >
           Save & Back to Businesses
-        </Button>
-        <Button
+        </button>
+        <button
           onClick={handleNext}
-          className="px-8 py-2 bg-purple-600 hover:bg-purple-700 text-white"
+          className="!px-20 !py-3 cursor-pointer bg-[#6F00FF] lg:whitespace-pre whitespace-normal text-white rounded-lg"
         >
           Save & Continue
-        </Button>
+        </button>
       </div>
     </div>
   )

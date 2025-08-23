@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
-import { Calendar, Copy, X, Clock } from "lucide-react"
+import { Calendar, Copy, X, Clock, ArrowRight } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 
 const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
@@ -240,7 +240,6 @@ export default function BusinessHoursStep({ data, onUpdate, onNext, onBack }: Bu
 
   const handleSaveAndBack = () => {
     if (validateForm()) {
-      // Save and go back to businesses list
       onBack()
     }
   }
@@ -248,13 +247,34 @@ export default function BusinessHoursStep({ data, onUpdate, onNext, onBack }: Bu
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2 mb-4">
-        <div className="w-5 h-5 bg-purple-600 rounded flex items-center justify-center">
-          <Calendar className="w-3 h-3 text-white" />
-        </div>
-        <h3 className="text-lg font-semibold">Business Hours & Availability</h3>
+    
+          <Clock className="size-6 text-[#9333EA]" />
+     
+        <h3 className="auth-heading !font-medium text-[#111827]">Business Hours & Availability</h3>
       </div>
-      <p className="text-gray-600 mb-6">When are you open?</p>
+      <p className="text-[#2D3643] Subheading !text-start mb-6">When are you open?</p>
 
+{/* Day Selection - Only show if not 24/7 */}
+{!formData.is24Hours && (
+        <div>
+          <Label className="text-sm font-medium">Days Open </Label>
+          <div className="flex flex-wrap gap-2 mt-2">
+            {dayAbbr.map((day, index) => (
+              <button
+                key={day}
+                className={`px-[53px] py-[13px] rounded ${
+                  formData.businessHours[days[index]]?.isOpen
+                    ? "border-[#9333EA] border hover:bg-[#F1EBFF] bg-[#F1EBFF] text-[#9333EA]"
+                    : "text-[#2D3643] bg-white border-[#E4E4E4] border hover:bg-[#F1EBFF]"
+                }`}
+                onClick={() => handleToggleDay(days[index])}
+              >
+                {day}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
       {/* General Errors */}
       {errors.general && (
         <div className="bg-red-50 border border-red-200 rounded-md p-3">
@@ -263,65 +283,46 @@ export default function BusinessHoursStep({ data, onUpdate, onNext, onBack }: Bu
           ))}
         </div>
       )}
-
-      {/* 24/7 Toggle */}
-      <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-        <div className="flex items-center gap-2">
+<Label>Optional Toggles:</Label>
+      <div className="flex flex-col gap-5">
+        {/* <div className="flex items-center gap-2">
           <Clock className="w-4 h-4 text-gray-600" />
           <Label htmlFor="24-7" className="text-sm font-medium">24/7 Open</Label>
-        </div>
+        </div> */}
+        <div className="flex gap-[11.5px]">
+
         <Switch
           id="24-7"
           checked={formData.is24Hours}
           onCheckedChange={handleToggle24Hours}
         />
-      </div>
-
-      {/* Day Selection - Only show if not 24/7 */}
-      {!formData.is24Hours && (
-        <div>
-          <Label className="text-sm font-medium">Days Open *</Label>
-          <div className="flex flex-wrap gap-2 mt-2">
-            {dayAbbr.map((day, index) => (
-              <Button
-                key={day}
-                variant={formData.businessHours[days[index]]?.isOpen ? "default" : "outline"}
-                size="sm"
-                className={`px-3 py-1 ${
-                  formData.businessHours[days[index]]?.isOpen
-                    ? "bg-purple-600 hover:bg-purple-700 text-white"
-                    : "text-gray-600 bg-white border-gray-300"
-                }`}
-                onClick={() => handleToggleDay(days[index])}
-              >
-                {day}
-              </Button>
-            ))}
-          </div>
+        <h2 className="text-sm font-normal">24/7 Open</h2>
         </div>
-      )}
-
-      {/* Optional Toggles */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-          <Label htmlFor="holidays" className="text-sm font-medium">Closed on Public Holidays</Label>
-          <Switch
+         <div className="flex gap-[11.5px]">
+         <Switch
             id="holidays"
             checked={formData.closedOnHolidays}
             onCheckedChange={handleToggleHolidays}
           />
-        </div>
+        <h2 className="text-sm font-normal">Closed on Public Holidays</h2>
+         </div>
+      </div>
+
+      
+
+      {/* Optional Toggles */}
+      <div className="space-y-3">
+      
         
         {!formData.is24Hours && (
-          <Button
+          <button
             onClick={copyMonFriHours}
-            variant="outline"
-            size="sm"
-            className="flex items-center gap-2 text-purple-600 hover:text-purple-700 border-purple-200"
+           
+            className="flex items-center gap-2 bg-[#F3F4F6] p-2 text-[#2D3643] border-purple-200 rounded-[8px]"
           >
             <Copy className="w-3 h-3" />
             Copy Mon-Fri hours to all weekdays
-          </Button>
+          </button>
         )}
       </div>
 
@@ -332,8 +333,8 @@ export default function BusinessHoursStep({ data, onUpdate, onNext, onBack }: Bu
           <div className="space-y-4">
             {days.map((day) => (
               formData.businessHours[day]?.isOpen && (
-                <Card key={day} className="border-gray-200">
-                  <CardContent className="p-4">
+                <div key={day} className="border-gray-200 border rounded-[8px]">
+                  <div className="p-4">
                     <div className="space-y-3">
                       <Label className="text-sm font-medium text-gray-900">{day}:</Label>
                       
@@ -348,32 +349,39 @@ export default function BusinessHoursStep({ data, onUpdate, onNext, onBack }: Bu
                       
                       <div className="space-y-3">
                         {formData.businessHours[day].slots.map((slot, index) => (
-                          <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                          <div key={index} className="flex items-center gap-3 p-3  ">
                             <span className="text-sm text-gray-600 w-20">Time Slot {index + 1}:</span>
-                            <Select 
-                              value={slot.start} 
-                              onValueChange={(value) => updateTimeSlot(day, index, 'start', value)}
+                            
+                            {/* Start Time Selector */}
+                            <Select
+                              label={undefined}
+                              required={true}
+                              placeholder="Start"
+                              value={slot.start}
+                              onValueChange={(v) => updateTimeSlot(day, index, 'start', v)}
+                              width="w-32"
                             >
-                              <SelectTrigger className="w-28">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {timeOptions.map((time) => (
-                                  <SelectItem key={time} value={time}>{time}</SelectItem>
+                              <SelectContent className="max-h-64">
+                                {timeOptions.map((t) => (
+                                  <SelectItem key={t} value={t}>{t}</SelectItem>
                                 ))}
                               </SelectContent>
                             </Select>
-                            <span className="text-sm text-gray-500">to</span>
-                            <Select 
-                              value={slot.end} 
-                              onValueChange={(value) => updateTimeSlot(day, index, 'end', value)}
+                            <ArrowRight className="size-4 text-[#2D3643]" />
+                            {/* <span className="text-sm text-gray-500">to</span> */}
+                            
+                            {/* End Time Selector */}
+                            <Select
+                              label={undefined}
+                              required={true}
+                              placeholder="End"
+                              value={slot.end}
+                              onValueChange={(v) => updateTimeSlot(day, index, 'end', v)}
+                              width="w-32"
                             >
-                              <SelectTrigger className="w-28">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {timeOptions.map((time) => (
-                                  <SelectItem key={time} value={time}>{time}</SelectItem>
+                              <SelectContent className="max-h-64">
+                                {timeOptions.map((t) => (
+                                  <SelectItem key={t} value={t}>{t}</SelectItem>
                                 ))}
                               </SelectContent>
                             </Select>
@@ -389,18 +397,17 @@ export default function BusinessHoursStep({ data, onUpdate, onNext, onBack }: Bu
                             )}
                           </div>
                         ))}
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-purple-600 hover:text-purple-700 p-0 h-auto"
+                        <button
+                         
+                          className="text-purple-600 cursor-pointer p-0 h-auto"
                           onClick={() => addTimeSlot(day)}
                         >
                           + Add Another Time Slot
-                        </Button>
+                        </button>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               )
             ))}
           </div>
@@ -408,20 +415,20 @@ export default function BusinessHoursStep({ data, onUpdate, onNext, onBack }: Bu
       )}
 
       {/* Action Buttons */}
-      <div className="flex justify-between pt-6">
-        <Button
-          variant="outline"
-          onClick={handleSaveAndBack}
-          className="px-8 py-2 border-blue-600 text-blue-600 hover:bg-blue-50"
+      <div className="flex gap-10 w-1/2 mx-auto">
+        <button
+         
+          onClick={handleNext}
+          className="!px-20 !py-3 cursor-pointer border-blue-600 text-white lg:whitespace-pre whitespace-normal bg-[#163987]  rounded-lg"
         >
           Save & Back to Businesses
-        </Button>
-        <Button
+        </button>
+        <button
           onClick={handleNext}
-          className="px-8 py-2 bg-purple-600 hover:bg-purple-700 text-white"
+          className="!px-20 !py-3 cursor-pointer bg-[#6F00FF] lg:whitespace-pre whitespace-normal text-white rounded-lg"
         >
           Save & Continue
-        </Button>
+        </button>
       </div>
     </div>
   )

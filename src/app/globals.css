@@ -155,3 +155,13 @@
 .learge-headeing{
   @apply text-[32px] leading-[38px] tracking-[0%] font-semibold text-[#111827];
 }
+
+/* Hide scrollbar for webkit browsers */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Safari and Chrome */
+}

@@ -98,7 +98,7 @@ export default function PageUpgrade() {
               <Switch
                 checked={isUpgraded}
                 onCheckedChange={setIsUpgraded}
-                className="w-12 h-6"
+                className="w-9 h-6"
               />
               <span className={`text-sm font-medium ${isUpgraded ? 'text-gray-900' : 'text-gray-500'}`}>
                 After upgrade
@@ -108,12 +108,12 @@ export default function PageUpgrade() {
             {/* Mobile Phone Mockup */}
             <div className="relative">
               {/* Phone Frame */}
-              <div className="w-80 h-[600px] bg-white border-2 border-purple-200 rounded-[40px] shadow-xl relative overflow-hidden">
+              <div className="w-[348px] h-[772px] bg-white border-5 border-purple-200 rounded-[40px] shadow-xl relative overflow-hidden">
                 {/* Notch */}
-                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-6 bg-black rounded-b-2xl z-10"></div>
+                <div className="absolute top-3 left-1/2 transform -translate-x-1/2 w-32 h-[27px] bg-black rounded-2xl z-10"></div>
                 
-                {/* Screen Content */}
-                <div className="h-full overflow-y-auto bg-gray-50">
+                                 {/* Screen Content */}
+                 <div className="h-full overflow-y-auto bg-gray-50 scrollbar-hide">
                   {/* Header */}
                   <div className="bg-white p-4 border-b border-gray-200">
                     <div className="flex items-center justify-between">

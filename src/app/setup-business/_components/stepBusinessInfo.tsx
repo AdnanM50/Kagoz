@@ -9,7 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Building2, Tag } from "lucide-react"
 import { JSX } from "react"
 import  { TiptapEditor } from "@/components/ui/texteditor"
-import { Button } from "@/components/ui/button"
 import BusinessStartDate from "@/components/ui/date-selector"
 
 interface StepProps {
