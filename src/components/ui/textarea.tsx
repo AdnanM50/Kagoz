@@ -18,7 +18,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             {required && <span className="ml-1 text-red-600">*</span>}
           </label>
         )}
-        <div className="flex items-center border rounded-[8px] px-3 py-2 !mt-2 bg-transparent">
+        <div className="flex items-start border rounded-[8px] px-3 py-2 !mt-2 bg-transparent">
           {PlaceholderIcon && <PlaceholderIcon className="size-5 text-[#949494] mr-2" />}
           <textarea
             ref={ref}

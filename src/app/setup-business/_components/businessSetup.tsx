@@ -120,7 +120,7 @@ const renderProgressBar = () => (
   <div className="w-full bg-white border-b border-gray-200 py-[25px] ">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="flex items-center justify-between">
-        <h1 className="text-[32px] leading-[38px] tracking-[0%] font-semibold text-[#111827]">Business Setup</h1>
+        <h1 className="learge-headeing ">Business Setup</h1>
         <div className="text-sm text-gray-500">
           Step {currentStep + 1} of 4 - {Math.round(((currentStep + 1) / (STEPS.length - 1)) * 100)}% Complete
         </div>

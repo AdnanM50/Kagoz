@@ -103,15 +103,18 @@ export default function BusinessInfoStep({ data, onUpdate, onNext }: BusinessInf
         <div>
           <Label htmlFor="tagline" className="text-sm font-medium">Tagline *</Label>
           <div className="relative mt-1">
-            <MessageSquare className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+            
             <Textarea
+            placeholderIcon={MessageSquare}
+            rows={1}
               id="tagline"
               value={formData.tagline}
               onChange={(e) => handleInputChange('tagline', e.target.value)}
-              className={`pl-10 min-h-[80px] resize-none ${errors.tagline ? 'border-red-500' : ''}`}
+              className={` ${errors.tagline ? 'border-red-500' : ''}`}
             />
           </div>
-          <div className="flex justify-between items-center mt-1">
+          <div className="flex justify-end
+           items-center mt-1">
             {errors.tagline && (
               <p className="text-xs text-red-500">{errors.tagline}</p>
             )}
@@ -122,12 +125,14 @@ export default function BusinessInfoStep({ data, onUpdate, onNext }: BusinessInf
         <div>
           <Label htmlFor="about" className="text-sm font-medium">About *</Label>
           <div className="relative mt-1">
-            <FileText className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+        
             <Textarea
+            rows={5}
               id="about"
+              placeholderIcon={FileText}
               value={formData.about}
               onChange={(e) => handleInputChange('about', e.target.value)}
-              className={`pl-10 min-h-[120px] resize-none ${errors.about ? 'border-red-500' : ''}`}
+              className={` ${errors.about ? 'border-red-500' : ''}`}
             />
           </div>
           <div className="flex justify-between items-center mt-1">
@@ -191,7 +196,9 @@ export default function BusinessInfoStep({ data, onUpdate, onNext }: BusinessInf
             )}
           </div>
 
-          <div>
+          
+        </div>
+        <div>
             <Label htmlFor="category" className="text-sm font-medium">Business Category *</Label>
             <Select value={formData.category} onValueChange={(value) => handleInputChange('category', value)}>
               <SelectTrigger className={`mt-1 ${errors.category ? 'border-red-500' : ''}`}>
@@ -210,7 +217,6 @@ export default function BusinessInfoStep({ data, onUpdate, onNext }: BusinessInf
               <p className="text-xs text-red-500 mt-1">{errors.category}</p>
             )}
           </div>
-        </div>
       </div>
 
       <div className="flex justify-between pt-6">

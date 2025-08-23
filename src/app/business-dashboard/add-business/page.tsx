@@ -245,23 +245,24 @@ export default function AddBusiness() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 p-4 lg:p-8">
+    <main className="min-h-screen pl-[18] ">
       <div className="w-full mx-auto">
         {/* Page header */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Edit Business</h1>
+     <div className="bg-white py-8 pl-9 pr-6">
+     <div className=" ">
+          <h1 className="learge-headeing mb-[26px]">Edit Business</h1>
         </div>
 
         {/* Tab Navigation */}
-        <div className="bg-white rounded-lg shadow-sm border mb-6">
-          <div className="flex flex-wrap">
+        <div className="bg-[#F4F4F5] rounded-lg shadow-sm border ">
+          <div className="flex flex-wrap p-1">
             {tabs.map((tab, index) => (
               <button
                 key={tab}
-                className={`flex-1 min-w-0 px-4 py-3 text-sm font-medium transition-colors ${
+                className={`flex-1 min-w-0 px-4 py-2 cursor-pointer common-text transition-colors ${
                   currentTab === index
-                    ? "bg-purple-600 text-white"
-                    : "text-gray-600 hover:text-gray-900 bg-white"
+                    ? "bg-purple-600 text-white rounded-[8px]"
+                    : "text-[#717684] hover:text-gray-900 bg-[#F4F4F5]"
                 } ${index === 0 ? "rounded-l-lg" : ""} ${index === tabs.length - 1 ? "rounded-r-lg" : ""}`}
                 onClick={() => setCurrentTab(index)}
               >
@@ -270,9 +271,10 @@ export default function AddBusiness() {
             ))}
           </div>
         </div>
+     </div>
 
         {/* Tab Content */}
-        <div className="bg-white rounded-lg shadow-sm border p-6 lg:p-8">
+        <div className="  p-6 lg:p-10">
           {renderCurrentStep()}
         </div>
 
