@@ -87,12 +87,15 @@ export default function BusinessInfoStep({ data, onUpdate, onNext }: BusinessInf
         <div>
           <Label htmlFor="businessName" className="text-sm font-medium">Business Name *</Label>
           <div className="relative mt-1">
-            <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+           
             <Input 
+            placeholderIcon={Building}
+            width="100%"
+              placeholder="Business Name"
               id="businessName" 
               value={formData.businessName}
               onChange={(e) => handleInputChange('businessName', e.target.value)}
-              className={`pl-10 ${errors.businessName ? 'border-red-500' : ''}`}
+              className={` ${errors.businessName ? 'border-red-500' : ''}`}
             />
           </div>
           {errors.businessName && (
@@ -145,12 +148,16 @@ export default function BusinessInfoStep({ data, onUpdate, onNext }: BusinessInf
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="startDate" className="text-sm font-medium">Business Starting Date *</Label>
+           
             <div className="flex gap-2 mt-1">
-              <Select value={formData.startYear} onValueChange={(value) => handleInputChange('startYear', value)}>
-                <SelectTrigger className={`w-full ${errors.startYear ? 'border-red-500' : ''}`}>
-                  <SelectValue placeholder="Year" />
-                </SelectTrigger>
+              <Select
+                label="Year"
+                required
+                placeholder="Year"
+                value={formData.startYear}
+                onValueChange={(value) => handleInputChange('startYear', value)}
+                width="w-full"
+              >
                 <SelectContent>
                   {Array.from({ length: 10 }, (_, i) => 2020 + i).map((year) => (
                     <SelectItem key={year} value={year.toString()}>
@@ -159,10 +166,14 @@ export default function BusinessInfoStep({ data, onUpdate, onNext }: BusinessInf
                   ))}
                 </SelectContent>
               </Select>
-              <Select value={formData.startMonth} onValueChange={(value) => handleInputChange('startMonth', value)}>
-                <SelectTrigger className={`w-full ${errors.startYear ? 'border-red-500' : ''}`}>
-                  <SelectValue placeholder="Month" />
-                </SelectTrigger>
+              <Select
+                label="Month"
+                required
+                placeholder="Month"
+                value={formData.startMonth}
+                onValueChange={(value) => handleInputChange('startMonth', value)}
+                width="w-full"
+              >
                 <SelectContent>
                   <SelectItem value="january">January</SelectItem>
                   <SelectItem value="february">February</SelectItem>
@@ -178,10 +189,14 @@ export default function BusinessInfoStep({ data, onUpdate, onNext }: BusinessInf
                   <SelectItem value="december">December</SelectItem>
                 </SelectContent>
               </Select>
-              <Select value={formData.startDay} onValueChange={(value) => handleInputChange('startDay', value)}>
-                <SelectTrigger className={`w-full ${errors.startYear ? 'border-red-500' : ''}`}>
-                  <SelectValue placeholder="Day" />
-                </SelectTrigger>
+              <Select
+                label="Day"
+                required
+                placeholder="Day"
+                value={formData.startDay}
+                onValueChange={(value) => handleInputChange('startDay', value)}
+                width="w-full"
+              >
                 <SelectContent>
                   {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
                     <SelectItem key={day} value={day.toString()}>
@@ -198,25 +213,25 @@ export default function BusinessInfoStep({ data, onUpdate, onNext }: BusinessInf
 
           
         </div>
-        <div>
-            <Label htmlFor="category" className="text-sm font-medium">Business Category *</Label>
-            <Select value={formData.category} onValueChange={(value) => handleInputChange('category', value)}>
-              <SelectTrigger className={`mt-1 ${errors.category ? 'border-red-500' : ''}`}>
-                <SelectValue placeholder="Business Platform" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="platform">Business Platform</SelectItem>
-                <SelectItem value="retail">Retail</SelectItem>
-                <SelectItem value="restaurant">Restaurant</SelectItem>
-                <SelectItem value="service">Service</SelectItem>
-                <SelectItem value="healthcare">Healthcare</SelectItem>
-                <SelectItem value="education">Education</SelectItem>
-              </SelectContent>
-            </Select>
-            {errors.category && (
-              <p className="text-xs text-red-500 mt-1">{errors.category}</p>
-            )}
-          </div>
+    
+          <Select
+  label="Business Category"
+  required
+  placeholder="Business Platform"
+  value={formData.category}
+  onValueChange={(value) => handleInputChange("category", value)}
+  width="w-full "
+>
+  <SelectContent>
+    <SelectItem value="platform">Business Platform</SelectItem>
+    <SelectItem value="retail">Retail</SelectItem>
+    <SelectItem value="restaurant">Restaurant</SelectItem>
+    <SelectItem value="service">Service</SelectItem>
+    <SelectItem value="healthcare">Healthcare</SelectItem>
+    <SelectItem value="education">Education</SelectItem>
+  </SelectContent>
+</Select>
+
       </div>
 
       <div className="flex justify-between pt-6">

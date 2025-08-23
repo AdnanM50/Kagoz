@@ -15,7 +15,7 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
   const navItems = [
     { label: "Home", href: "/business-dashboard", icon: Home },
     { label: "Special Features", href: "/business-dashboard/features", icon: Award },
-    { label: "Page Upgrades", href: "/business-dashboard/upgrades", icon: Crown },
+    { label: "Page Upgrades", href: "/business-dashboard/page-upgrade", icon: Crown },
   ];
   return (
     <>

@@ -81,126 +81,110 @@ export default function LocationContactStep({ data, onUpdate, onNext, onBack }: 
       </div>
       <p className="text-gray-600 mb-6">Where is your business located?</p>
 
-      <div className="space-y-4">
-        <div>
-          <Label htmlFor="streetAddress" className="text-sm font-medium">Street Address *</Label>
-          <div className="relative mt-1">
-            <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <Input 
+    <div className="grid grid-cols-2 gap-5">
+    <Input 
+    label="streetAddress"
+    placeholderIcon={Building}
+    required
+    width="100%"
               id="streetAddress" 
               value={formData.streetAddress}
               onChange={(e) => handleInputChange('streetAddress', e.target.value)}
-              className={`pl-10 ${errors.streetAddress ? 'border-red-500' : ''}`}
+              className={` ${errors.streetAddress ? 'border-red-500' : ''}`}
             />
-          </div>
-          {errors.streetAddress && (
-            <p className="text-xs text-red-500 mt-1">{errors.streetAddress}</p>
-          )}
-        </div>
-
-        <div>
-          <Label htmlFor="houseRoad" className="text-sm font-medium">House / Road Info *</Label>
-          <Input 
+            <Input 
+            label="House / Road Info"
+            required
+            width="100%"
             id="houseRoad" 
             value={formData.houseRoad}
             onChange={(e) => handleInputChange('houseRoad', e.target.value)}
-            className={`mt-1 ${errors.houseRoad ? 'border-red-500' : ''}`}
+            className={` ${errors.houseRoad ? 'border-red-500' : ''}`}
           />
-          {errors.houseRoad && (
-            <p className="text-xs text-red-500 mt-1">{errors.houseRoad}</p>
-          )}
-        </div>
-
-        <div>
-          <Label htmlFor="localArea" className="text-sm font-medium">Local Area *</Label>
           <Input 
+          required
+          label="localArea"
+          width="100%"
             id="localArea" 
             value={formData.localArea}
             onChange={(e) => handleInputChange('localArea', e.target.value)}
-            className={`mt-1 ${errors.localArea ? 'border-red-500' : ''}`}
+            className={` ${errors.localArea ? 'border-red-500' : ''}`}
           />
-          {errors.localArea && (
-            <p className="text-xs text-red-500 mt-1">{errors.localArea}</p>
-          )}
-        </div>
-
-        <div>
-          <Label htmlFor="city" className="text-sm font-medium">City *</Label>
-          <Input 
+           <Input 
+           label="city"
+           required
+           width="100%"
             id="city" 
             value={formData.city}
             onChange={(e) => handleInputChange('city', e.target.value)}
-            className={`mt-1 ${errors.city ? 'border-red-500' : ''}`}
+            className={` ${errors.city ? 'border-red-500' : ''}`}
           />
-          {errors.city && (
-            <p className="text-xs text-red-500 mt-1">{errors.city}</p>
-          )}
-        </div>
-
-        <div>
-          <Label htmlFor="postalCode" className="text-sm font-medium">Postal Code *</Label>
-          <Input 
+           <Input 
+           label="postal Code"
+           required
+           width="100%"
             id="postalCode" 
             value={formData.postalCode}
             onChange={(e) => handleInputChange('postalCode', e.target.value)}
             className={`mt-1 ${errors.postalCode ? 'border-red-500' : ''}`}
           />
-          {errors.postalCode && (
-            <p className="text-xs text-red-500 mt-1">{errors.postalCode}</p>
-          )}
-        </div>
-
-        <div>
-          <Label htmlFor="country" className="text-sm font-medium">Country</Label>
-          <Input 
+            <Input 
+            label="country"
             id="country" 
+            readOnly
+            width="100%"
             value={formData.country}
             onChange={(e) => handleInputChange('country', e.target.value)}
             className="mt-1"
           />
-        </div>
+    </div>
 
-        <div>
-          <Label htmlFor="mobile" className="text-sm font-medium">Mobile Number *</Label>
-          <div className="relative mt-1">
-            <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <Input 
+      <div className="space-y-4">
+       
+
+      
+          <Input
+            placeholder="phone"
+            required
+            width="100%"
+            placeholderIcon={Phone}
               id="mobile" 
               value={formData.mobile}
               onChange={(e) => handleInputChange('mobile', e.target.value)}
-              className={`pl-10 ${errors.mobile ? 'border-red-500' : ''}`}
+              className={` ${errors.mobile ? 'border-red-500' : ''}`}
             />
-          </div>
-          {errors.mobile && (
-            <p className="text-xs text-red-500 mt-1">{errors.mobile}</p>
-          )}
-        </div>
+        
+       
 
-        <div>
-          <Label htmlFor="website" className="text-sm font-medium">Website URL (Optional)</Label>
-          <div className="relative mt-1">
+    
+        
             <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
             <Input 
+            label="Website URL (Optional)"
+            placeholderIcon={Globe}
+            width="100%"
+            placeholder="https://www.kagoz.com"
               id="website" 
               value={formData.website}
               onChange={(e) => handleInputChange('website', e.target.value)}
-              className="pl-10"
+              className=""
             />
-          </div>
-        </div>
+          
+    
 
-        <div>
-          <Label htmlFor="facebook" className="text-sm font-medium">Facebook Page (Optional)</Label>
-          <div className="relative mt-1">
-            <Facebook className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+       
+          
             <Input 
+            width="100%"
+            placeholderIcon={Facebook}
+            label="Facebook Page (Optional)"
+            placeholder="https://facebook.com/kagoz"
               id="facebook" 
               value={formData.facebook}
               onChange={(e) => handleInputChange('facebook', e.target.value)}
-              className="pl-10"
+              className=""
             />
-          </div>
-        </div>
+         
       </div>
 
       <div className="flex justify-between pt-6">
