@@ -53,9 +53,9 @@ export interface BusinessData {
 
 const STEPS = [
   "Business Information",
+  "Location & Contact",
   "Business Hours & Availability",
   "Media & Business Branding",
-  "Location & Contact",
   "Complete",
 ]
 
@@ -74,7 +74,7 @@ export function BusinessSetupWizard() {
     logo: "",
     bannerImage: "",
     gallery: [],
-    streetAddress: "123A, Mohammadpur Ltd.",
+    streetAddress: "123/A, Mohammadia Ltd",
     houseInfo: "Road 7, House 22",
     localArea: "Mohammadpur",
     city: "Dhaka",
@@ -84,16 +84,16 @@ export function BusinessSetupWizard() {
     website: "https://www.kagoz.com",
     facebook: "https://facebook.com/kagoz",
     businessHours: {
-      Mon: { isOpen: true, openTime: "9:00 AM", closeTime: "6:00 PM" },
-      Tue: { isOpen: true, openTime: "9:00 AM", closeTime: "6:00 PM" },
-      Wed: { isOpen: true, openTime: "9:00 AM", closeTime: "6:00 PM" },
-      Thu: { isOpen: true, openTime: "9:00 AM", closeTime: "6:00 PM" },
-      Fri: { isOpen: true, openTime: "9:00 AM", closeTime: "6:00 PM" },
-      Sat: { isOpen: true, openTime: "9:00 AM", closeTime: "6:00 PM" },
+      Mon: { isOpen: false, openTime: "9:00 AM", closeTime: "6:00 PM" },
+      Tue: { isOpen: false, openTime: "9:00 AM", closeTime: "6:00 PM" },
+      Wed: { isOpen: false, openTime: "9:00 AM", closeTime: "6:00 PM" },
+      Thu: { isOpen: false, openTime: "9:00 AM", closeTime: "6:00 PM" },
+      Fri: { isOpen: false, openTime: "9:00 AM", closeTime: "6:00 PM" },
+      Sat: { isOpen: false, openTime: "9:00 AM", closeTime: "6:00 PM" },
       Sun: { isOpen: false, openTime: "9:00 AM", closeTime: "6:00 PM" },
     },
     is24x7: false,
-    closedOnHolidays: true,
+    closedOnHolidays: false,
   })
 
   const updateBusinessData = (field: string, value: any) => {
@@ -106,6 +106,22 @@ export function BusinessSetupWizard() {
         await submitBusiness()
       }
       setCurrentStep(currentStep + 1)
+    }
+  }
+
+  // Check if current step is valid
+  const isCurrentStepValid = () => {
+    switch (currentStep) {
+      case 0: // Business Info
+        return businessData.name && businessData.tagline && businessData.about
+      case 1: // Location & Contact
+        return businessData.streetAddress && businessData.city && businessData.mobile
+      case 2: // Business Hours
+        return Object.values(businessData.businessHours).some(hours => hours.isOpen) || businessData.is24x7
+      case 3: // Media & Branding
+        return true // Optional step
+      default:
+        return true
     }
   }
 
@@ -206,7 +222,7 @@ const renderProgressBar = () => (
             </div>
           </div>
 
-          {currentStep >= 3 && (
+          {currentStep >= 1 && (
             <>
               <div className="flex items-start space-x-2">
                 <MapPin className="w-3 h-3 text-gray-400 mt-0.5" />
@@ -245,31 +261,48 @@ const renderProgressBar = () => (
             </>
           )}
 
-          {currentStep >= 1 && (
+          {currentStep >= 2 && (
             <div className="flex items-start space-x-2">
               <Clock className="w-3 h-3 text-gray-400 mt-0.5" />
               <div>
                 <p className="font-medium">Business Hours</p>
                 {businessData.is24x7 ? (
-                  <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">
-                    Open 24 hours a day, 7 days a week
-                  </Badge>
+                  <div className="space-y-2">
+                    <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">
+                      Open 24 hours a day, 7 days a week
+                    </Badge>
+                    {businessData.closedOnHolidays && (
+                      <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-800">
+                        Closed on public holidays
+                      </Badge>
+                    )}
+                  </div>
                 ) : (
                   <div className="space-y-1">
-                    {Object.entries(businessData.businessHours).map(([day, hours]) => (
-                      <div key={day} className="flex justify-between text-xs">
-                        <span>{day}</span>
-                        <span className={hours.isOpen ? "text-green-600" : "text-red-600"}>
-                          {hours.isOpen ? `${hours.openTime} - ${hours.closeTime}` : "Closed"}
-                        </span>
-                      </div>
-                    ))}
+                    {(() => {
+                      const hasOpenDays = Object.values(businessData.businessHours).some(hours => hours.isOpen)
+                      if (!hasOpenDays) {
+                        return <p className="text-xs text-gray-500">Business hours will appear here</p>
+                      }
+                      return (
+                        <>
+                          {Object.entries(businessData.businessHours).map(([day, hours]) => (
+                            <div key={day} className="flex justify-between text-xs">
+                              <span>{day}</span>
+                              <span className={hours.isOpen ? "text-green-600" : "text-red-600"}>
+                                {hours.isOpen ? `${hours.openTime} - ${hours.closeTime}` : "Closed"}
+                              </span>
+                            </div>
+                          ))}
+                          {businessData.closedOnHolidays && (
+                            <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-800 mt-1">
+                              Closed on public holidays
+                            </Badge>
+                          )}
+                        </>
+                      )
+                    })()}
                   </div>
-                )}
-                {businessData.closedOnHolidays && (
-                  <Badge variant="secondary" className="text-xs bg-red-100 text-red-800 mt-1">
-                    Closed on public holidays
-                  </Badge>
                 )}
               </div>
             </div>
@@ -277,8 +310,8 @@ const renderProgressBar = () => (
         </div>
 
         <div className="mt-4 py-3 px-5 rounded-[8px] bg-[#F9FAFB] border-l-[4px] border-[#6F00FF]  text-xs text-[#717684]">
-          This preview shows how your business {currentStep < 3 ? "hours will appear" : "information will appear"} to
-          customers. Make sure all {currentStep < 3 ? "times" : "details"} are accurate.
+          This preview shows how your business {currentStep < 1 ? "information will appear" : currentStep < 2 ? "location and contact information will appear" : currentStep < 3 ? "hours will appear" : "information will appear"} to
+          customers. Make sure all {currentStep < 1 ? "details" : currentStep < 2 ? "details" : currentStep < 3 ? "times" : "details"} are accurate.
         </div>
       </div>
     </div>
@@ -296,7 +329,7 @@ const renderProgressBar = () => (
         )
       case 1:
         return (
-          <StepHours
+          <StepLocationContact
             businessData={businessData}
             updateBusinessData={updateBusinessData}
             renderBusinessPreview={renderBusinessPreview}
@@ -304,7 +337,7 @@ const renderProgressBar = () => (
         )
       case 2:
         return (
-          <StepMediaBranding
+          <StepHours
             businessData={businessData}
             updateBusinessData={updateBusinessData}
             renderBusinessPreview={renderBusinessPreview}
@@ -312,7 +345,7 @@ const renderProgressBar = () => (
         )
       case 3:
         return (
-          <StepLocationContact
+          <StepMediaBranding
             businessData={businessData}
             updateBusinessData={updateBusinessData}
             renderBusinessPreview={renderBusinessPreview}
@@ -368,7 +401,15 @@ const renderProgressBar = () => (
               <span>Previous</span>
             </Button>
 
-            <Button onClick={nextStep} className="bg-purple-600  hover:bg-purple-700 flex items-center space-x-2">
+            <Button 
+              onClick={nextStep} 
+              disabled={!isCurrentStepValid()}
+              className={`flex items-center space-x-2 ${
+                isCurrentStepValid() 
+                  ? "bg-purple-600 hover:bg-purple-700" 
+                  : "bg-gray-400 cursor-not-allowed"
+              }`}
+            >
               <span>Next</span>
               <ChevronRight className="w-4 h-4" />
             </Button>

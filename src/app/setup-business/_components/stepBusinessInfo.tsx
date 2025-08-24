@@ -6,8 +6,8 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Building2, Tag } from "lucide-react"
-import { JSX } from "react"
+import { Building2, Tag, Search } from "lucide-react"
+import { JSX, useState, useMemo } from "react"
 import  { TiptapEditor } from "@/components/ui/texteditor"
 import BusinessStartDate from "@/components/ui/date-selector"
 
@@ -18,6 +18,43 @@ interface StepProps {
 }
 
 export function StepBusinessInfo({ businessData, updateBusinessData, renderBusinessPreview }: StepProps) {
+  const [searchQuery, setSearchQuery] = useState("")
+  
+  const categories = [
+    { value: "pharmacy", label: "Pharmacy" },
+    { value: "restaurant", label: "Restaurant" },
+    { value: "retail-store", label: "Retail Store" },
+    { value: "grocery-store", label: "Grocery Store" },
+    { value: "clothing-store", label: "Clothing Store" },
+    { value: "electronics-shop", label: "Electronics Shop" },
+    { value: "beauty-salon", label: "Beauty Salon" },
+    { value: "barbershop", label: "Barbershop" },
+    { value: "cafe", label: "Cafe" },
+    { value: "bakery", label: "Bakery" },
+    { value: "bookstore", label: "Bookstore" },
+    { value: "gym-fitness", label: "Gym/Fitness Center" },
+    { value: "medical-clinic", label: "Medical Clinic" },
+    { value: "dental-clinic", label: "Dental Clinic" },
+    { value: "law-firm", label: "Law Firm" },
+    { value: "accounting-firm", label: "Accounting Firm" },
+    { value: "real-estate", label: "Real Estate" },
+    { value: "travel-agency", label: "Travel Agency" },
+    { value: "photography-studio", label: "Photography Studio" },
+    { value: "auto-repair", label: "Auto Repair" },
+    { value: "pet-store", label: "Pet Store" },
+    { value: "jewelry-store", label: "Jewelry Store" },
+    { value: "hardware-store", label: "Hardware Store" },
+    { value: "flower-shop", label: "Flower Shop" },
+    { value: "laundry-service", label: "Laundry Service" },
+    { value: "other", label: "Other" }
+  ]
+
+  const filteredCategories = useMemo(() => {
+    return categories.filter((category) =>
+      category.label.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  }, [searchQuery])
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
       <div className="lg:col-span-2">
@@ -70,13 +107,7 @@ export function StepBusinessInfo({ businessData, updateBusinessData, renderBusin
                   onChange={(e) => updateBusinessData("about", e)}  required id="about" placeholder="Detailed description of your business, services, and what makes you unique..." />
     </div>
               <div>
-                {/* <Label htmlFor="startingDate">Business Starting Date *</Label>
-                <Input
-                  id="startingDate"
-                  value={businessData.startingDate}
-                  onChange={(e) => updateBusinessData("startingDate", e.target.value)}
-                  className="mt-1"
-                /> */}
+                
                       <BusinessStartDate
                         id="startingDate"
                         label="Business Starting Date"
@@ -92,18 +123,38 @@ export function StepBusinessInfo({ businessData, updateBusinessData, renderBusin
               </div>
 
               <div>
-                <Label htmlFor="category">Business Category *</Label>
-                <Select  value={businessData.category} onValueChange={(value) => updateBusinessData("category", value)}>
-                  <SelectTrigger className="mt-1">
-                    <SelectValue />
-                  </SelectTrigger>
+                <Select
+                  label="Business Category"
+                  required
+                  placeholder="Search categories..."
+                  value={businessData.category}
+                  onValueChange={(value) => updateBusinessData("category", value)}
+                  width="w-full"
+                >
                   <SelectContent>
-                    <SelectItem value="Business Platform">Business Platform</SelectItem>
-                    <SelectItem value="Technology">Technology</SelectItem>
-                    <SelectItem value="Retail">Retail</SelectItem>
-                    <SelectItem value="Food & Beverage">Food & Beverage</SelectItem>
-                    <SelectItem value="Healthcare">Healthcare</SelectItem>
-                    <SelectItem value="Education">Education</SelectItem>
+                    {/* Search Bar */}
+                    <div className="relative mb-3 p-2">
+                      <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                      <Input
+                        placeholder="Search categories..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="pl-10 border-gray-300 focus:border-purple-500 focus:ring-purple-500"
+                      />
+                    </div>
+
+                    {/* Category Grid */}
+                    <div className="grid grid-cols-2 gap-1 p-2 max-h-60 overflow-y-auto">
+                      {filteredCategories.map((category) => (
+                        <SelectItem
+                          key={category.value}
+                          value={category.value}
+                          className="text-sm"
+                        >
+                          {category.label}
+                        </SelectItem>
+                      ))}
+                    </div>
                   </SelectContent>
                 </Select>
               </div>

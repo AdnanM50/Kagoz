@@ -1,15 +1,25 @@
 "use client"
 
 import type { BusinessData } from "./businessSetup"
-import { Card, CardContent } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Select, SelectContent, SelectItem } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
-import { Clock } from "lucide-react"
-import { JSX } from "react"
+import { Clock, Copy, X, ArrowRight } from "lucide-react"
+import { JSX, useState, useEffect } from "react"
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+
+interface TimeSlot {
+  id: string
+  startTime: string
+  endTime: string
+}
+
+interface DayHours {
+  isOpen: boolean
+  timeSlots: TimeSlot[]
+}
 
 interface StepProps {
   businessData: BusinessData
@@ -18,135 +28,292 @@ interface StepProps {
 }
 
 export function StepHours({ businessData, updateBusinessData, renderBusinessPreview }: StepProps) {
+  const [businessHours, setBusinessHours] = useState<{ [key: string]: DayHours }>(() => {
+    const hours: { [key: string]: DayHours } = {}
+    DAYS.forEach(day => {
+      hours[day] = {
+        isOpen: false,
+        timeSlots: [{
+          id: `${day}-1`,
+          startTime: "9:00 AM",
+          endTime: "6:00 PM"
+        }]
+      }
+    })
+    return hours
+  })
+
+  useEffect(() => {
+    if (businessData.closedOnHolidays && !businessData.is24x7) {
+      const newHours = { ...businessHours }
+      DAYS.forEach(day => {
+        if (day !== "Fri") {
+          newHours[day] = {
+            isOpen: true,
+            timeSlots: [{
+              id: `${day}-1`,
+              startTime: "9:00 AM",
+              endTime: "6:00 PM"
+            }]
+          }
+        } else {
+          newHours[day] = {
+            isOpen: false,
+            timeSlots: [{
+              id: `${day}-1`,
+              startTime: "9:00 AM",
+              endTime: "6:00 PM"
+            }]
+          }
+        }
+      })
+      newHours.Mon = {
+        isOpen: true,
+        timeSlots: [
+          {
+            id: "Mon-1",
+            startTime: "9:00 AM",
+            endTime: "1:00 PM"
+          },
+          {
+            id: "Mon-2",
+            startTime: "2:00 PM",
+            endTime: "6:00 PM"
+          }
+        ]
+      }
+      setBusinessHours(newHours)
+      updateHours(newHours)
+    }
+  }, [businessData.closedOnHolidays])
+
+  const updateHours = (newHours: { [key: string]: DayHours }) => {
+    setBusinessHours(newHours)
+    const formattedHours: { [key: string]: { isOpen: boolean; openTime: string; closeTime: string } } = {}
+    Object.entries(newHours).forEach(([day, hours]) => {
+      formattedHours[day] = {
+        isOpen: hours.isOpen,
+        openTime: hours.timeSlots[0]?.startTime || "9:00 AM",
+        closeTime: hours.timeSlots[0]?.endTime || "6:00 PM"
+      }
+    })
+    updateBusinessData("businessHours", formattedHours)
+  }
+
+  const toggleDay = (day: string) => {
+    const newHours = { ...businessHours }
+    newHours[day].isOpen = !newHours[day].isOpen
+    updateHours(newHours)
+  }
+
+  const addTimeSlot = (day: string) => {
+    const newHours = { ...businessHours }
+    const slotCount = newHours[day].timeSlots.length + 1
+    newHours[day].timeSlots.push({
+      id: `${day}-${slotCount}`,
+      startTime: "9:00 AM",
+      endTime: "6:00 PM"
+    })
+    updateHours(newHours)
+  }
+
+  const removeTimeSlot = (day: string, slotId: string) => {
+    const newHours = { ...businessHours }
+    newHours[day].timeSlots = newHours[day].timeSlots.filter(slot => slot.id !== slotId)
+    updateHours(newHours)
+  }
+
+  const updateTimeSlot = (day: string, slotId: string, field: 'startTime' | 'endTime', value: string) => {
+    const newHours = { ...businessHours }
+    const slot = newHours[day].timeSlots.find(s => s.id === slotId)
+    if (slot) {
+      slot[field] = value
+      updateHours(newHours)
+    }
+  }
+
+  const copyMonFriHours = () => {
+    const newHours = { ...businessHours }
+    const monFriSlots = newHours.Mon.timeSlots
+    DAYS.slice(0, 5).forEach((day) => {
+      newHours[day].timeSlots = monFriSlots.map((slot: TimeSlot) => {
+        const parts = slot.id.split('-')
+        const slotNumber = parts.length > 1 ? parts[1] : '1'
+        return {
+          ...slot,
+          id: `${day}-${slotNumber}`
+        }
+      })
+    })
+    updateHours(newHours)
+  }
+
+  const generateTimeOptions = () => {
+    const options = []
+    for (let hour = 0; hour < 24; hour++) {
+      for (let minute = 0; minute < 60; minute += 30) {
+        const time = new Date()
+        time.setHours(hour, minute, 0, 0)
+        const timeString = time.toLocaleTimeString('en-US', {
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: true
+        })
+        options.push(timeString)
+      }
+    }
+    return options
+  }
+
+  const timeOptions = generateTimeOptions()
+  const hasSelectedDays = Object.values(businessHours).some(day => day.isOpen)
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-8">
       <div className="lg:col-span-2">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center space-x-2 mb-6">
-              <Clock className="w-5 h-5 text-purple-600" />
-              <h2 className="text-lg font-semibold">Business Hours & Availability</h2>
+        <div className="p-4 lg:p-6">
+          <div className="flex items-center space-x-2 mb-6">
+            <Clock className="w-5 h-5 text-purple-600" />
+            <h2 className="text-lg font-semibold">Business Hours & Availability</h2>
+          </div>
+          <p className="text-gray-600 mb-6">When are you open?</p>
+
+          <div className="space-y-6">
+            <div>
+              <Label className="text-sm font-medium">Days Open *</Label>
+              <div className="grid grid-cols-7 gap-1 sm:gap-2 mt-2">
+                {DAYS.map((day) => (
+                  <Button
+                    key={day}
+                    variant={businessHours[day].isOpen ? "default" : "outline"}
+                    size="sm"
+                    className={`h-8 text-xs ${
+                      businessHours[day].isOpen 
+                        ? "bg-purple-600 hover:bg-purple-700 text-white" 
+                        : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                    }`}
+                    onClick={() => toggleDay(day)}
+                  >
+                    {day}
+                  </Button>
+                ))}
+              </div>
             </div>
-            <p className="text-gray-600 mb-6">When are you open?</p>
 
-            <div className="space-y-6">
-              <div>
-                <Label className="text-sm font-medium">Days Open *</Label>
-                <div className="grid grid-cols-7 gap-2 mt-2">
-                  {DAYS.map((day) => (
-                    <Button
-                      key={day}
-                      variant={businessData.businessHours[day].isOpen ? "default" : "outline"}
-                      size="sm"
-                      className={`h-8 text-xs ${businessData.businessHours[day].isOpen ? "bg-purple-600 hover:bg-purple-700" : ""}`}
-                      onClick={() => {
-                        const newHours = { ...businessData.businessHours }
-                        newHours[day].isOpen = !newHours[day].isOpen
-                        updateBusinessData("businessHours", newHours)
-                      }}
-                    >
-                      {day}
-                    </Button>
-                  ))}
+            <div className="space-y-4">
+              <Label className="text-sm font-medium">Optional Toggles:</Label>
+
+              <div className="flex items-center justify-between p-3 border rounded-lg">
+                <div className="flex items-center space-x-3">
+                  <div className="w-2 h-2 bg-purple-600 rounded-full"></div>
+                  <span className="text-sm">24/7 Open</span>
                 </div>
+                <Switch
+                  checked={businessData.is24x7}
+                  onCheckedChange={(checked) => updateBusinessData("is24x7", checked)}
+                />
               </div>
 
-              <div className="space-y-4">
-                <Label className="text-sm font-medium">Optional Toggles:</Label>
-
-                <div className="flex items-center justify-between p-3 border rounded-lg">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-2 h-2 bg-purple-600 rounded-full"></div>
-                    <span className="text-sm">24/7 Open</span>
-                  </div>
-                  <Switch
-                    checked={businessData.is24x7}
-                    onCheckedChange={(checked) => updateBusinessData("is24x7", checked)}
-                  />
+              <div className="flex items-center justify-between p-3 border rounded-lg">
+                <div className="flex items-center space-x-3">
+                  <div className="w-2 h-2 bg-purple-600 rounded-full"></div>
+                  <span className="text-sm">Closed on Public Holidays</span>
                 </div>
-
-                <div className="flex items-center justify-between p-3 border rounded-lg">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-2 h-2 bg-purple-600 rounded-full"></div>
-                    <span className="text-sm">Closed on Public Holidays</span>
-                  </div>
-                  <Switch
-                    checked={businessData.closedOnHolidays}
-                    onCheckedChange={(checked) => updateBusinessData("closedOnHolidays", checked)}
-                  />
-                </div>
+                <Switch
+                  checked={businessData.closedOnHolidays}
+                  onCheckedChange={(checked) => updateBusinessData("closedOnHolidays", checked)}
+                />
               </div>
+            </div>
 
-              {!businessData.is24x7 && (
-                <div className="space-y-4">
-                  <Label className="text-sm font-medium">Opening Hours</Label>
-                  {Object.entries(businessData.businessHours).map(([day, hours]) => (
-                    <div key={day} className="flex items-center space-x-4">
-                      <div className="w-16 text-sm font-medium">{day}</div>
-                      {hours.isOpen ? (
-                        <>
-                          <Select
-                            value={hours.openTime}
-                            onValueChange={(value) => {
-                              const newHours = { ...businessData.businessHours }
-                              newHours[day].openTime = value
-                              updateBusinessData("businessHours", newHours)
-                            }}
-                          >
-                            <SelectTrigger className="w-24">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {Array.from({ length: 24 }, (_, i) => {
-                                const hour = i === 0 ? 12 : i > 12 ? i - 12 : i
-                                const ampm = i < 12 ? "AM" : "PM"
-                                return (
-                                  <SelectItem key={i} value={`${hour}:00 ${ampm}`}>
-                                    {hour}:00 {ampm}
+            {!businessData.is24x7 && hasSelectedDays && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={copyMonFriHours}
+                className="flex items-center space-x-2 text-sm"
+              >
+                <Copy className="w-4 h-4" />
+                <span>Copy Mon-Fri hours to all weekdays</span>
+              </Button>
+            )}
+
+            {!businessData.is24x7 && hasSelectedDays && businessData.closedOnHolidays && (
+              <div className="space-y-6">
+                <Label className="text-sm font-medium">Opening Hours</Label>
+
+                {/* ✅ Only show open days */}
+                {DAYS.filter((day) => businessHours[day].isOpen).map((day) => (
+                  <div key={day} className="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
+                    <div className="text-sm font-medium text-gray-900 mb-4">{day}</div>
+
+                    <div className="space-y-4">
+                      {businessHours[day].timeSlots.map((slot, index) => (
+                        <div key={slot.id} className="space-y-2">
+                          <div className="text-xs text-gray-500 font-medium">
+                            Time Slot {index + 1}:
+                          </div>
+                          <div className="flex items-center space-x-3">
+                            <Select
+                              value={slot.startTime}
+                              onValueChange={(value) => updateTimeSlot(day, slot.id, 'startTime', value)}
+                            >
+                              <SelectContent className="max-h-64">
+                                {timeOptions.map((time) => (
+                                  <SelectItem key={time} value={time}>
+                                    {time}
                                   </SelectItem>
-                                )
-                              })}
-                            </SelectContent>
-                          </Select>
-                          <span className="text-sm text-gray-500">to</span>
-                          <Select
-                            value={hours.closeTime}
-                            onValueChange={(value) => {
-                              const newHours = { ...businessData.businessHours }
-                              newHours[day].closeTime = value
-                              updateBusinessData("businessHours", newHours)
-                            }}
-                          >
-                            <SelectTrigger className="w-24">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {Array.from({ length: 24 }, (_, i) => {
-                                const hour = i === 0 ? 12 : i > 12 ? i - 12 : i
-                                const ampm = i < 12 ? "AM" : "PM"
-                                return (
-                                  <SelectItem key={i} value={`${hour}:00 ${ampm}`}>
-                                    {hour}:00 {ampm}
+                                ))}
+                              </SelectContent>
+                            </Select>
+
+                            <ArrowRight className="size-4 text-[#2D3643]" />
+
+                            <Select
+                              value={slot.endTime}
+                              onValueChange={(value) => updateTimeSlot(day, slot.id, 'endTime', value)}
+                            >
+                              <SelectContent className="max-h-64">
+                                {timeOptions.map((time) => (
+                                  <SelectItem key={time} value={time}>
+                                    {time}
                                   </SelectItem>
-                                )
-                              })}
-                            </SelectContent>
-                          </Select>
-                        </>
-                      ) : (
-                        <span className="text-sm text-gray-500">Closed</span>
-                      )}
+                                ))}
+                              </SelectContent>
+                            </Select>
+
+                            {businessHours[day].timeSlots.length > 1 && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => removeTimeSlot(day, slot.id)}
+                                className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+                              >
+                                <X className="w-4 h-4" />
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => addTimeSlot(day)}
+                        className="text-purple-600 hover:text-purple-700 text-sm font-medium p-0 h-auto"
+                      >
+                        + Add Another Time Slot
+                      </Button>
                     </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       <div>
-        <div className="sticky top-6">
+        <div className="p-4">
           <div className="flex items-center space-x-2 mb-4">
             <div className="w-2 h-2 bg-purple-600 rounded-full"></div>
             <h3 className="font-semibold">Hours Preview</h3>
@@ -157,5 +324,3 @@ export function StepHours({ businessData, updateBusinessData, renderBusinessPrev
     </div>
   )
 }
-
-
