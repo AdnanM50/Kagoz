@@ -16,17 +16,37 @@ import {
   Star,
   ChevronLeft,
   ChevronRight,
+  Eye,
 } from "lucide-react"
 import { StepBusinessInfo } from "./stepBusinessInfo"
 import { StepHours } from "./stepHours"
 import { StepMediaBranding } from "./stepMediaBranding"
 import { StepLocationContact } from "./stepLocationContact" 
+import { CompletionAndPublish } from "./completionAndPublish"
+import { FullPagePreview } from "./fullPagePreview"
+import { SuccessDialog } from "./successDialog"
+
+interface UploadedFile {
+  id: string
+  file: File
+  preview: string
+  name: string
+  size: string
+}
+
+interface MediaBrandingData {
+  logo: UploadedFile | null
+  banner: UploadedFile | null
+  license: UploadedFile[]
+  gallery: UploadedFile[]
+}
 
 export interface BusinessData {
   name: string
   tagline: string
   about: string
-  startingDate: string
+  startingDate: { year: string; month: string; day: string }
+  issueDate: { year: string; month: string; day: string }
   category: string
   logo: string
   bannerImage: string
@@ -49,6 +69,7 @@ export interface BusinessData {
   }
   is24x7: boolean
   closedOnHolidays: boolean
+  mediaBranding?: MediaBrandingData
 }
 
 const STEPS = [
@@ -63,26 +84,27 @@ const STEPS = [
 
 export function BusinessSetupWizard() {
   const [currentStep, setCurrentStep] = useState(0)
+  const [showFullPreview, setShowFullPreview] = useState(false)
+  const [isPublished, setIsPublished] = useState(false)
   const [businessData, setBusinessData] = useState<BusinessData>({
-    name: "Kagoz.com",
-    tagline:
-      "KAGOZ stands out by offering both free and premium listing options to cater to the diverse needs of businesses.",
-    about:
-      "KAGOZ stands out by offering both free and premium listing options to cater to the diverse needs of businesses. Whether you are a startup looking for cost-effective exposure or an established enterprise, our platform provides a comprehensive solution to showcase your services and reach potential customers. Free & Easy Listings: Straightforward process to get businesses listed at no cost. Verified Listings: Ensuring accuracy and reliability. User-Friendly Search Experience: Advanced search features allow users to find businesses by category, name, or location.",
-    startingDate: "July 15, 2025",
-    category: "Business Platform",
+    name: "",
+    tagline: "",
+    about: "",
+    startingDate: { year: "", month: "", day: "" },
+    issueDate: { year: "", month: "", day: "" },
+    category: "",
     logo: "",
     bannerImage: "",
     gallery: [],
-    streetAddress: "123/A, Mohammadia Ltd",
-    houseInfo: "Road 7, House 22",
-    localArea: "Mohammadpur",
-    city: "Dhaka",
-    postalCode: "1207",
-    country: "Bangladesh",
-    mobile: "+8801712345678",
-    website: "https://www.kagoz.com",
-    facebook: "https://facebook.com/kagoz",
+    streetAddress: "",
+    houseInfo: "",
+    localArea: "",
+    city: "",
+    postalCode: "",
+    country: "",
+    mobile: "",
+    website: "",
+    facebook: "",
     businessHours: {
       Mon: { isOpen: false, openTime: "9:00 AM", closeTime: "6:00 PM" },
       Tue: { isOpen: false, openTime: "9:00 AM", closeTime: "6:00 PM" },
@@ -138,7 +160,7 @@ const renderProgressBar = () => (
       <div className="flex items-center justify-between">
         <h1 className="learge-headeing ">Business Setup</h1>
         <div className="text-sm text-gray-500">
-          Step {currentStep + 1} of 4 - {Math.round(((currentStep + 1) / (STEPS.length - 1)) * 100)}% Complete
+          Step {currentStep + 1} of 5 - {Math.round(((currentStep + 1) / STEPS.length) * 100)}% Complete
         </div>
       </div>
       {/* Progress container */}
@@ -149,7 +171,7 @@ const renderProgressBar = () => (
           <div
             className="h-2 bg-purple-600 rounded-full transition-all duration-300"
             style={{
-              width: `${((currentStep + 0.5) / (STEPS.length - 1)) * 100}%`,
+              width: `${((currentStep + 0.5) / STEPS.length) * 100}%`,
             }}
           />
         </div>
@@ -167,13 +189,9 @@ const renderProgressBar = () => (
                 }`}
                 style={{ marginTop: "-18px" }}
               >
-                {index < currentStep ? (
-                  <Check className="w-4 h-4" />
-                ) : index === STEPS.length - 1 ? (
-                  <Check className="w-4 h-4" />
-                ) : (
-                  index + 1
-                )}
+                {index === STEPS.length - 1
+                  ? <Check className="w-4 h-4" />
+                  : index + 1}
               </div>
             
             </div>
@@ -191,73 +209,79 @@ const renderProgressBar = () => (
             <div className="size-16 basis-16 shrink-0 bg-purple-600 rounded-lg flex items-center justify-center">
               <Building2 className="size-8 text-white" />
             </div>
-            <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-sm truncate">{businessData.name}</h3>
-              <p className="text-xs text-gray-600 break-words">{businessData.tagline}</p>
-            </div>
+                         <div className="flex-1 min-w-0">
+               <h3 className="font-semibold text-sm truncate">{businessData.name || "Business Name"}</h3>
+               <p className="text-xs text-gray-600 break-words">{businessData.tagline || "Business tagline"}</p>
+             </div>
           </div>
 
         <div className="space-y-6 text-xs">
-          <div className="flex items-start space-x-2">
-            <Building2 className="w-3 h-3 text-gray-400 mt-0.5" />
-            <div>
-              <p className="font-medium">About</p>
-              <p className="text-gray-600 line-clamp-3">{businessData.about}</p>
-            </div>
-          </div>
+                     <div className="flex items-start space-x-2">
+             <Building2 className="w-3 h-3 text-gray-400 mt-0.5" />
+             <div>
+               <p className="font-medium">About</p>
+               <p className="text-gray-600 line-clamp-3">{businessData.about || "Business description will appear here"}</p>
+             </div>
+           </div>
 
-          <div className="flex items-center space-x-2">
-            <Calendar className="w-3 h-3 text-gray-400" />
-            <div>
-              <p className="font-medium">Starting Date</p>
-              <p className="text-gray-600">{businessData.startingDate}</p>
-            </div>
-          </div>
+                     <div className="flex items-center space-x-2">
+             <Calendar className="w-3 h-3 text-gray-400" />
+             <div>
+               <p className="font-medium">Starting Date</p>
+               <p className="text-gray-600">
+                 {businessData.startingDate.year && businessData.startingDate.month && businessData.startingDate.day 
+                   ? `${businessData.startingDate.year}-${businessData.startingDate.month}-${businessData.startingDate.day}`
+                   : "Not specified"}
+               </p>
+             </div>
+           </div>
 
-          <div className="flex items-center space-x-2">
-            <Star className="w-3 h-3 text-gray-400" />
-            <div>
-              <p className="font-medium">Category</p>
-              <p className="text-gray-600">{businessData.category}</p>
-            </div>
-          </div>
+           <div className="flex items-center space-x-2">
+             <Star className="w-3 h-3 text-gray-400" />
+             <div>
+               <p className="font-medium">Category</p>
+               <p className="text-gray-600">{businessData.category || "Not specified"}</p>
+             </div>
+           </div>
 
           {currentStep >= 1 && (
             <>
-              <div className="flex items-start space-x-2">
-                <MapPin className="w-3 h-3 text-gray-400 mt-0.5" />
-                <div>
-                  <p className="font-medium">Address</p>
-                  <p className="text-gray-600">
-                    {businessData.streetAddress}, {businessData.houseInfo}, {businessData.localArea},{" "}
-                    {businessData.city}, {businessData.postalCode}, {businessData.country}
-                  </p>
-                </div>
-              </div>
+                             <div className="flex items-start space-x-2">
+                 <MapPin className="w-3 h-3 text-gray-400 mt-0.5" />
+                 <div>
+                   <p className="font-medium">Address</p>
+                   <p className="text-gray-600">
+                     {(() => {
+                       const parts = [businessData.streetAddress, businessData.houseInfo, businessData.localArea, businessData.city, businessData.postalCode, businessData.country].filter(Boolean)
+                       return parts.length > 0 ? parts.join(", ") : "Address not provided"
+                     })()}
+                   </p>
+                 </div>
+               </div>
 
-              <div className="flex items-center space-x-2">
-                <Phone className="w-3 h-3 text-gray-400" />
-                <div>
-                  <p className="font-medium">Phone</p>
-                  <p className="text-gray-600">{businessData.mobile}</p>
-                </div>
-              </div>
+               <div className="flex items-center space-x-2">
+                 <Phone className="w-3 h-3 text-gray-400" />
+                 <div>
+                   <p className="font-medium">Phone</p>
+                   <p className="text-gray-600">{businessData.mobile || "Not provided"}</p>
+                 </div>
+               </div>
 
-              <div className="flex items-center space-x-2">
-                <Globe className="w-3 h-3 text-gray-400" />
-                <div>
-                  <p className="font-medium">Website</p>
-                  <p className="text-blue-600">{businessData.website}</p>
-                </div>
-              </div>
+               <div className="flex items-center space-x-2">
+                 <Globe className="w-3 h-3 text-gray-400" />
+                 <div>
+                   <p className="font-medium">Website</p>
+                   <p className="text-blue-600">{businessData.website || "Not provided"}</p>
+                 </div>
+               </div>
 
-              <div className="flex items-center space-x-2">
-                <Facebook className="w-3 h-3 text-gray-400" />
-                <div>
-                  <p className="font-medium">Facebook</p>
-                  <p className="text-blue-600">{businessData.facebook}</p>
-                </div>
-              </div>
+               <div className="flex items-center space-x-2">
+                 <Facebook className="w-3 h-3 text-gray-400" />
+                 <div>
+                   <p className="font-medium">Facebook</p>
+                   <p className="text-blue-600">{businessData.facebook || "Not provided"}</p>
+                 </div>
+               </div>
             </>
           )}
 
@@ -353,30 +377,30 @@ const renderProgressBar = () => (
         )
       case 4:
         return (
-          <div className="text-center py-16">
-            <div className="w-16 h-16 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Check className="w-8 h-8 text-white" />
-            </div>
-            <h2 className="text-2xl font-bold mb-4">🎉 Business Published!</h2>
-            <p className="text-gray-600 mb-2">Your business listing has been submitted for review.</p>
-            <p className="text-gray-600">We'll notify you once it goes live on our platform.</p>
-          </div>
+          <SuccessDialog
+            onContinue={() => {
+              setCurrentStep(0)
+              setShowFullPreview(false)
+            }}
+          />
         )
       default:
-        return null
+         return null
     }
   }
+    
+
 
   const submitBusiness = async () => {
     try {
-      const response = await fetch("/api/business/setup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(businessData),
-      })
-      if (!response.ok) {
-        console.error("Failed to submit business data")
-      }
+      // const response = await fetch("/api/business/setup", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify(businessData),
+      // })
+      // if (!response.ok) {
+      //   console.error("Failed to submit business data")
+      // }
     } catch (error) {
       console.error("Error submitting business data", error)
     }
@@ -389,13 +413,13 @@ const renderProgressBar = () => (
       <div className="max-w-[1184px] mx-auto mt-8">
         {renderStep()}
 
-        {currentStep < STEPS.length - 1 && (
-          <div className="flex justify-between mt-8">
+        {currentStep < STEPS.length - 1 && currentStep !== 4 && (
+          <div className="flex gap-4 my-8 w-1/2">
             <Button
               variant="outline"
               onClick={prevStep}
               disabled={currentStep === 0}
-              className="flex items-center space-x-2 bg-transparent"
+              className="flex items-center space-x-2 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-lg !px-10 y-2"
             >
               <ChevronLeft className="w-4 h-4" />
               <span>Previous</span>
@@ -404,14 +428,13 @@ const renderProgressBar = () => (
             <Button 
               onClick={nextStep} 
               disabled={!isCurrentStepValid()}
-              className={`flex items-center space-x-2 ${
+              className={`flex items-center w-full space-x-2 rounded-lg px-6 py-2 ${
                 isCurrentStepValid() 
-                  ? "bg-purple-600 hover:bg-purple-700" 
-                  : "bg-gray-400 cursor-not-allowed"
+                  ? "bg-purple-600 hover:bg-purple-700 text-white" 
+                  : "bg-gray-400 cursor-not-allowed text-white"
               }`}
             >
               <span>Next</span>
-              <ChevronRight className="w-4 h-4" />
             </Button>
           </div>
         )}

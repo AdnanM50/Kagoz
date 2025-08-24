@@ -181,21 +181,19 @@ export function StepHours({ businessData, updateBusinessData, renderBusinessPrev
           <div className="space-y-6">
             <div>
               <Label className="text-sm font-medium">Days Open *</Label>
-              <div className="grid grid-cols-7 gap-1 sm:gap-2 mt-2">
+              <div className="grid grid-cols-4 gap-1 sm:gap-[10px] mt-2">
                 {DAYS.map((day) => (
-                  <Button
+                  <button
                     key={day}
-                    variant={businessHours[day].isOpen ? "default" : "outline"}
-                    size="sm"
-                    className={`h-8 text-xs ${
-                      businessHours[day].isOpen 
-                        ? "bg-purple-600 hover:bg-purple-700 text-white" 
-                        : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                    className={`py-3 px-10 sm:px-[52px] text-xs rounded ${
+                      businessHours[day].isOpen
+                        ? "text-purple-600 border border-purple-600 font-medium bg-[#F1EBFF]"
+                        : "bg-white text-gray-600 border-gray-300 border hover:bg-gray-50"
                     }`}
                     onClick={() => toggleDay(day)}
                   >
                     {day}
-                  </Button>
+                  </button>
                 ))}
               </div>
             </div>

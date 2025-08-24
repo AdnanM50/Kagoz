@@ -95,10 +95,7 @@ export function StepBusinessInfo({ businessData, updateBusinessData, renderBusin
                   className="mt-1"
                   placeholder="Brief description of your business"
                 />
-                <div className="flex justify-between items-center mb-1">
-                  <span></span>
-                  <span className="text-xs text-gray-500">{businessData.tagline.length}/150 characters</span>
-                </div>
+              
               </div>
 
               
