@@ -173,7 +173,7 @@ export function StepHours({ businessData, updateBusinessData, renderBusinessPrev
       <div className="lg:col-span-2">
         <div className="p-4 lg:p-6">
           <div className="flex items-center space-x-2 mb-6">
-            <Clock className="w-5 h-5 text-purple-600" />
+            <Clock className="w-5 h-5 text-[#6F00FF]" />
             <h2 className="text-lg font-semibold">Business Hours & Availability</h2>
           </div>
           <p className="text-gray-600 mb-6">When are you open?</p>
@@ -187,7 +187,7 @@ export function StepHours({ businessData, updateBusinessData, renderBusinessPrev
                     key={day}
                     className={`py-3 px-10 sm:px-[52px] text-xs rounded ${
                       businessHours[day].isOpen
-                        ? "text-purple-600 border border-purple-600 font-medium bg-[#F1EBFF]"
+                        ? "text-[#6F00FF] border border-[#6F00FF] font-medium bg-[#F1EBFF]"
                         : "bg-white text-gray-600 border-gray-300 border hover:bg-gray-50"
                     }`}
                     onClick={() => toggleDay(day)}
@@ -203,7 +203,7 @@ export function StepHours({ businessData, updateBusinessData, renderBusinessPrev
 
               <div className="flex items-center justify-between p-3 border rounded-lg">
                 <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-purple-600 rounded-full"></div>
+                  <div className="w-2 h-2 bg-[#6F00FF] rounded-full"></div>
                   <span className="text-sm">24/7 Open</span>
                 </div>
                 <Switch
@@ -214,7 +214,7 @@ export function StepHours({ businessData, updateBusinessData, renderBusinessPrev
 
               <div className="flex items-center justify-between p-3 border rounded-lg">
                 <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-purple-600 rounded-full"></div>
+                  <div className="w-2 h-2 bg-[#6F00FF] rounded-full"></div>
                   <span className="text-sm">Closed on Public Holidays</span>
                 </div>
                 <Switch
@@ -297,7 +297,7 @@ export function StepHours({ businessData, updateBusinessData, renderBusinessPrev
                         variant="ghost"
                         size="sm"
                         onClick={() => addTimeSlot(day)}
-                        className="text-purple-600 hover:text-purple-700 text-sm font-medium p-0 h-auto"
+                        className="text-[#6F00FF] hover:text-purple-700 text-sm font-medium p-0 h-auto"
                       >
                         + Add Another Time Slot
                       </Button>
@@ -313,7 +313,7 @@ export function StepHours({ businessData, updateBusinessData, renderBusinessPrev
       <div>
         <div className="p-4">
           <div className="flex items-center space-x-2 mb-4">
-            <div className="w-2 h-2 bg-purple-600 rounded-full"></div>
+            <div className="w-2 h-2 bg-[#6F00FF] rounded-full"></div>
             <h3 className="font-semibold">Hours Preview</h3>
           </div>
           {renderBusinessPreview()}

@@ -18,14 +18,14 @@ export function Header({ setSidebarOpen,className }: HeaderProps) {
             <Menu className="h-5 w-5" />
           </Button>
           <div className="flex items-center space-x-2 lg:hidden">
-            <div className="w-6 h-6 bg-purple-600 rounded flex items-center justify-center">
+            <div className="w-6 h-6 bg-[#6F00FF] rounded flex items-center justify-center">
               <div className="w-3 h-3 bg-white rounded-sm"></div>
             </div>
             <span className="text-xl font-bold text-gray-900">KAGOZ</span>
           </div>
         </div>
         <Avatar className="h-8 w-8">
-          <AvatarFallback className="bg-purple-100 text-purple-600">U</AvatarFallback>
+          <AvatarFallback className="bg-purple-100 text-[#6F00FF]">U</AvatarFallback>
         </Avatar>
       </div>
     </header>

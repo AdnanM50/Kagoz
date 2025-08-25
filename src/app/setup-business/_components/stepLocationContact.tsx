@@ -20,7 +20,7 @@ export function StepLocationContact({
   return (
     <div>
       <div className="flex items-center space-x-2 mb-6">
-        <MapPin className="w-5 h-5 text-purple-600" />
+        <MapPin className="w-5 h-5 text-[#6F00FF]" />
         <h2 className="text-lg font-semibold">Location & Contact</h2>
       </div>
       <p className="text-gray-600 mb-6">Where is your business located?</p>
@@ -122,7 +122,7 @@ export function StepLocationContact({
         <div className="col-span-1">
           <div className="">
             <div className="flex items-center space-x-2 mb-4">
-              <div className="w-2 h-2 bg-purple-600 rounded-full"></div>
+              <div className="w-2 h-2 bg-[#6F00FF] rounded-full"></div>
               <h3 className="font-semibold">Location Preview</h3>
             </div>
 
@@ -130,7 +130,7 @@ export function StepLocationContact({
               <CardContent className="p-4">
                 {/* Business Card */}
                 <div className="flex items-center space-x-3 mb-4 bg-gradient-to-r border border-[#CCFBF1] rounded-[12px] px-4 py-[20px] from-[#F0FDFA] to-[#FAF5FF]">
-                  <div className="size-16 basis-16 shrink-0 bg-purple-600 rounded-lg flex items-center justify-center">
+                  <div className="size-16 basis-16 shrink-0 bg-[#6F00FF] rounded-lg flex items-center justify-center">
                     <Building2 className="size-8 text-white" />
                   </div>
                   <div className="flex-1 min-w-0">

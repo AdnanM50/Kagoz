@@ -114,17 +114,17 @@ export default function Table({
                   <td className="px-6 py-4 text-center space-x-2">
                     <Button
                       variant="outline"
-                      className="border-purple-600 border text-purple-600 common-text hover:bg-purple-50"
+                      className="border-[#6F00FF] border text-[#6F00FF] common-text hover:bg-purple-50"
                       onClick={() => onEdit && onEdit(row)}
                     >
                       <PenLine /> Edit
                     </Button>
                     {row.status === "Pending" ? (
-                      <Button className="bg-purple-600 text-white common-text py-2 px-6 hover:bg-purple-700">
+                      <Button className="bg-[#6F00FF] text-white common-text py-2 px-6 hover:bg-purple-700">
                         <SquareArrowOutUpRight /> Preview
                       </Button>
                     ) : (
-                      <Button className="bg-purple-600 text-white common-text py-2 px-6 hover:bg-purple-700">
+                      <Button className="bg-[#6F00FF] text-white common-text py-2 px-6 hover:bg-purple-700">
                         <SquareArrowOutUpRight /> Live Preview
                       </Button>
                     )}
@@ -145,7 +145,7 @@ export default function Table({
               key={page}
               className={`px-3 py-1 rounded-md ${
                 page === 1
-                  ? "bg-purple-600 text-white"
+                  ? "bg-[#6F00FF] text-white"
                   : "text-gray-600 hover:bg-gray-100"
               }`}
             >

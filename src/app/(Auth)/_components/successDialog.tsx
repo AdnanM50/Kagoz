@@ -50,7 +50,7 @@ const SuccessModal = ({
         <div className="mt-6">
           <Link
             href={actionHref}
-            className="text-purple-600 hover:text-purple-700 font-medium inline-flex items-center gap-1"
+            className="text-[#6F00FF] hover:text-purple-700 font-medium inline-flex items-center gap-1"
           >
             {actionLabel} →
           </Link>

@@ -362,7 +362,7 @@ export default function BusinessForm({ businessId, mode, onSuccess, onCancel }: 
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="bg-white rounded-lg p-6 flex items-center gap-3">
-          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-600"></div>
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#6F00FF]"></div>
           <p className="text-gray-700">Loading business data...</p>
         </div>
       </div>
@@ -388,7 +388,7 @@ export default function BusinessForm({ businessId, mode, onSuccess, onCancel }: 
                   key={tab}
                   className={`flex-1 min-w-0 px-4 py-2 cursor-pointer common-text transition-colors ${
                     currentTab === index
-                      ? "bg-purple-600 text-white rounded-[8px]"
+                      ? "bg-[#6F00FF] text-white rounded-[8px]"
                       : "text-[#717684] hover:text-gray-900 bg-[#F4F4F5]"
                   } ${index === 0 ? "rounded-l-lg" : ""} ${index === tabs.length - 1 ? "rounded-r-lg" : ""}`}
                   onClick={() => setCurrentTab(index)}
@@ -409,7 +409,7 @@ export default function BusinessForm({ businessId, mode, onSuccess, onCancel }: 
         {isSubmitting && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg p-6 flex items-center gap-3">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-600"></div>
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#6F00FF]"></div>
               <p className="text-gray-700">
                 {mode === 'edit' ? 'Updating your business...' : 'Creating your business...'}
               </p>

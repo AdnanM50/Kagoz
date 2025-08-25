@@ -130,7 +130,7 @@ export default function SpecialFeaturesPage() {
               <h3 className="text-lg font-semibold text-gray-900 mb-1">Add Promo Video</h3>
               <p className="text-sm text-gray-600">Embed a YouTube video to promote your business</p>
             </div>
-            <Button className="bg-purple-600 hover:bg-purple-700 text-white flex items-center gap-2">
+            <Button className="bg-[#6F00FF] hover:bg-purple-700 text-white flex items-center gap-2">
               <Play className="h-4 w-4" />
               See Tutorial
             </Button>
@@ -155,7 +155,7 @@ export default function SpecialFeaturesPage() {
               <h3 className="text-lg font-semibold text-gray-900 mb-1">Add Customer Brand Logo</h3>
               <p className="text-sm text-gray-600">Upload and showcase customer brand logos to highlight trusted collaborations</p>
             </div>
-            <Button className="bg-purple-600 hover:bg-purple-700 text-white flex items-center gap-2">
+            <Button className="bg-[#6F00FF] hover:bg-purple-700 text-white flex items-center gap-2">
               <Play className="h-4 w-4" />
               See Tutorial
             </Button>
@@ -178,7 +178,7 @@ export default function SpecialFeaturesPage() {
               <h3 className="text-lg font-semibold text-gray-900 mb-1">Customer Video Feedback</h3>
               <p className="text-sm text-gray-600">Upload video testimonials from satisfied customers to build trust and engagement</p>
             </div>
-            <Button className="bg-purple-600 hover:bg-purple-700 text-white flex items-center gap-2">
+            <Button className="bg-[#6F00FF] hover:bg-purple-700 text-white flex items-center gap-2">
               <Play className="h-4 w-4" />
               See Tutorial
             </Button>
@@ -281,7 +281,7 @@ export default function SpecialFeaturesPage() {
               <h3 className="text-lg font-semibold text-gray-900 mb-1">Featured Offers</h3>
               <p className="text-sm text-gray-600">Display special offers that add value for your customers</p>
             </div>
-            <Button className="bg-purple-600 hover:bg-purple-700 text-white flex items-center gap-2">
+            <Button className="bg-[#6F00FF] hover:bg-purple-700 text-white flex items-center gap-2">
               <Play className="h-4 w-4" />
               See Tutorial
             </Button>

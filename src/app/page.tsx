@@ -30,26 +30,26 @@ const Page: React.FC = () => {
 
   return (
     <div className="bg-white">
-      <div className="mx-auto max-w-[900px]  py-12">
+      <div className="mx-auto max-w-[900px] px-4 sm:px-6 py-8 sm:py-12">
         {/* Header Illustration */}
-        <div className="flex justify-center mb-8">
+        <div className="flex justify-center mb-6 sm:mb-8">
           <Image
             src="/images/Illustration1.png"
             alt="Business listing illustration"
             width={1000}
             height={1000}
-            className="w-[270px] h-[174px]"
+            className="w-[220px] h-[142px] sm:w-[270px] sm:h-[174px]"
           />
         </div>
         {/* Main Content */}
         <div className="text-center ">
-          <h1 className="heading mb-4 inter-font">
+          <h1 className="heading mb-3 sm:mb-4 inter-font">
             Let's Check If Your Business is Already Listed
           </h1>
           <p className="Subheading inter-font">
             We'll avoid duplicates and help you take control of your listing if it already exists.
           </p>
-          <div className="mt-[32px] ">
+          <div className="mt-6 sm:mt-8 ">
             <SearchBox businesses={businesses} onSearch={handleSearch} />
             <p className="mt-3 example-text inter-font">
               e.g. Rahman Electronics or Molla Pharmacy

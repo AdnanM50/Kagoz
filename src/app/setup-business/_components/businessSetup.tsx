@@ -169,7 +169,7 @@ const renderProgressBar = () => (
         <div className="absolute top-5 left-0 w-full h-2 bg-[#F2F2F2] rounded-full">
           {/* Purple active line */}
           <div
-            className="h-2 bg-purple-600 rounded-full transition-all duration-300"
+            className="h-2 bg-[#6F00FF] rounded-full transition-all duration-300"
             style={{
               width: `${((currentStep + 0.5) / STEPS.length) * 100}%`,
             }}
@@ -182,9 +182,9 @@ const renderProgressBar = () => (
               <div
                 className={`sm:size-8 size-6 rounded-full mb-8 flex items-center justify-center text-sm font-medium z-10 ${
                   index < currentStep
-                    ? "bg-purple-600 text-white"
+                    ? "bg-[#6F00FF] text-white"
                     : index === currentStep
-                    ? "bg-purple-600 text-white"
+                    ? "bg-[#6F00FF] text-white"
                     : "bg-white border-2 border-[#D1D1D1] text-gray-500"
                 }`}
                 style={{ marginTop: "-18px" }}
@@ -206,7 +206,7 @@ const renderProgressBar = () => (
     <div className="w-full border border-[#E4E4E4] rounded-2xl">
       <div className="p-4">
           <div className="flex items-center space-x-3 mb-4 bg-gradient-to-r border border-[#CCFBF1] rounded-[12px] px-4 py-[20px] from-[#F0FDFA] to-[#FAF5FF]">
-            <div className="size-16 basis-16 shrink-0 bg-purple-600 rounded-lg flex items-center justify-center">
+            <div className="size-16 basis-16 shrink-0 bg-[#6F00FF] rounded-lg flex items-center justify-center">
               <Building2 className="size-8 text-white" />
             </div>
                          <div className="flex-1 min-w-0">
@@ -376,11 +376,26 @@ const renderProgressBar = () => (
           />
         )
       case 4:
-        return (
+        return isPublished ? (
           <SuccessDialog
             onContinue={() => {
               setCurrentStep(0)
               setShowFullPreview(false)
+              setIsPublished(false)
+            }}
+          />
+        ) : showFullPreview ? (
+          <FullPagePreview
+            businessData={businessData}
+            onBack={() => setShowFullPreview(false)}
+          />
+        ) : (
+          <CompletionAndPublish
+            businessData={businessData}
+            completionPercentage={Math.round(((currentStep + 1) / STEPS.length) * 100)}
+            onPreviewClick={() => setShowFullPreview(true)}
+            onPublish={async () => {
+              setIsPublished(true)
             }}
           />
         )
@@ -430,7 +445,7 @@ const renderProgressBar = () => (
               disabled={!isCurrentStepValid()}
               className={`flex items-center w-full space-x-2 rounded-lg px-6 py-2 ${
                 isCurrentStepValid() 
-                  ? "bg-purple-600 hover:bg-purple-700 text-white" 
+                  ? "bg-[#6F00FF] hover:bg-purple-700 text-white" 
                   : "bg-gray-400 cursor-not-allowed text-white"
               }`}
             >

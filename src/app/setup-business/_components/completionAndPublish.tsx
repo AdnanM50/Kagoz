@@ -16,16 +16,20 @@ import {
   Star,
   Eye,
   ArrowLeft,
+  CircleCheckBig,
+  SquareArrowOutUpRight,
 } from "lucide-react"
 import type { BusinessData } from "./businessSetup"
+import Image from "next/image"
 
 interface CompletionAndPublishProps {
   businessData: BusinessData
+  completionPercentage: number
   onPreviewClick: () => void
   onPublish?: () => void
 }
 
-export function CompletionAndPublish({ businessData, onPreviewClick }: CompletionAndPublishProps) {
+export function CompletionAndPublish({ businessData, completionPercentage, onPreviewClick, onPublish }: CompletionAndPublishProps) {
   const [isPublishing, setIsPublishing] = useState(false)
 
   const handlePublish = async () => {
@@ -33,7 +37,9 @@ export function CompletionAndPublish({ businessData, onPreviewClick }: Completio
     // Simulate publishing process
     setTimeout(() => {
       setIsPublishing(false)
-      // Handle success
+      if (onPublish) {
+        onPublish()
+      }
     }, 2000)
   }
 
@@ -80,6 +86,8 @@ export function CompletionAndPublish({ businessData, onPreviewClick }: Completio
     })
   }
 
+
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Progress Bar */}
@@ -94,14 +102,14 @@ export function CompletionAndPublish({ businessData, onPreviewClick }: Completio
         {/* Progress Steps */}
         <div className="relative">
           <div className="absolute top-5 left-0 w-full h-2 bg-gray-200 rounded-full">
-            <div className="h-2 bg-purple-600 rounded-full transition-all duration-300" style={{ width: "95%" }} />
+            <div className="h-2 bg-[#6F00FF] rounded-full transition-all duration-300" style={{ width: "95%" }} />
           </div>
           <div className="relative flex justify-between">
             {[1, 2, 3, 4, 5].map((step) => (
               <div key={step} className="flex flex-col items-center">
                 <div
                   className={`w-8 h-8 rounded-full mb-8 flex items-center justify-center text-sm font-medium z-10 ${
-                    step < 5 ? "bg-purple-600 text-white" : "bg-white border-2 border-gray-300 text-gray-500"
+                    step < 5 ? "bg-[#6F00FF] text-white" : "bg-white border-2 border-gray-300 text-gray-500"
                   }`}
                   style={{ marginTop: "-18px" }}
                 >
@@ -124,20 +132,30 @@ export function CompletionAndPublish({ businessData, onPreviewClick }: Completio
           {/* Progress Summary Card */}
           <Card className="border-2 border-gray-100">
             <CardContent className="p-6">
-              <h3 className="font-semibold text-lg mb-4">Progress Summary</h3>
+              <h3 className="common-text text-[#111827] mb-4">Progress Summary</h3>
               
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-700">Your listing is 100% complete</span>
-                  <div className="w-32 h-2 bg-gray-200 rounded-full">
-                    <div className="w-full h-2 bg-purple-600 rounded-full"></div>
-                  </div>
-                </div>
+                                 <div className="flex items-center justify-between">
+                   <span className="text-gray-700">📊 Your listing is {completionPercentage}% complete</span>
+                 </div>
+                  
+                     <div className="w-full h-2 bg-gray-200 relative rounded-full">
+                       <div 
+                         className="h-2 bg-[#6F00FF]  rounded-full transition-all duration-300" 
+                         style={{ width: `${completionPercentage}%` }}
+                       ></div>
+                       <span className="absolute right-0 -top-5  text-xs font-semibold text-[#2D3643] pr-1">
+                         {completionPercentage}%
+                       </span>
+                     </div>
+                  
                 
-                <div className="flex items-center space-x-2 text-green-600">
-                  <Check className="w-5 h-5" />
-                  <span className="font-medium">Great job! You've completed your business profile.</span>
-                </div>
+                 <div className="flex items-center space-x-2 text-[#15803D]">
+                   
+                   <span className="font-medium">
+                     <Image width={1000} height={1000} src="/icons/checkmark.png" alt="Verified Badge" className="w-4 h-4 inline-block mr-1" />
+                     {completionPercentage === 100 ? "Great job! You've completed your business profile." : "Keep going! Add more details to improve your listing."}</span>
+                 </div>
               </div>
             </CardContent>
           </Card>
@@ -150,7 +168,7 @@ export function CompletionAndPublish({ businessData, onPreviewClick }: Completio
           <Card className="border border-gray-200">
             <CardContent className="p-0">
                              {/* Banner Image */}
-               <div className="h-48 bg-gradient-to-r from-blue-500 to-purple-600 relative overflow-hidden">
+               <div className="h-48 bg-gradient-to-r from-blue-500 to-[#6F00FF] relative overflow-hidden">
                  {businessData.mediaBranding?.banner ? (
                    <img 
                      src={businessData.mediaBranding.banner.preview} 
@@ -308,29 +326,37 @@ export function CompletionAndPublish({ businessData, onPreviewClick }: Completio
 
           {/* Progress and Preview Button */}
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex-1 mr-4">
-                <div className="w-full h-2 bg-gray-200 rounded-full">
-                  <div className="w-[95%] h-2 bg-green-500 rounded-full"></div>
-                </div>
-              </div>
-              <span className="text-sm font-medium text-green-600">95% Complete</span>
-            </div>
-            <p className="text-sm text-gray-600">Almost there! Add more details to improve visibility.</p>
+                                   <span className="common-text text-center flex justify-center !font-medium text-[#15803D]"><CircleCheckBig className="size-4" />{completionPercentage}% Complete</span>
+             <div className="flex items-center justify-between">
+               <div className="flex-1 mr-4">
+                 <div className="w-full h-2 bg-gray-200 rounded-full">
+                   <div 
+                     className="h-2 bg-green-500 rounded-full transition-all duration-300" 
+                     style={{ width: `${completionPercentage}%` }}
+                   ></div>
+                 </div>
+               </div>
+              
+             </div>
+             <p className="text-sm text-[#15803D] text-center">
+               {completionPercentage === 100 
+                 ? "Perfect! Your listing is complete and ready to publish." 
+                 : "🎯 Almost there! Add more details to improve visibility."}
+             </p>
             
-            <Button 
+            <button 
               onClick={onPreviewClick}
-              className="w-full bg-purple-600 hover:bg-purple-700 text-white"
+              className="w-full text-[#6F00FF] bg-[#F1EBFF] flex items-center justify-center rounded-[8px] py-3 border !border-[#6F00FF] "
             >
-              <Eye className="w-4 h-4 mr-2" />
+              <SquareArrowOutUpRight className="w-4 h-4 mr-2" />
               See Full Page Preview
-            </Button>
+            </button>
           </div>
         </div>
       </div>
 
       {/* Bottom Navigation */}
-      <div className="flex justify-between mt-8 pt-6 border-t border-gray-200">
+      {/* <div className="flex justify-between mt-8 pt-6 border-t border-gray-200">
         <Button variant="outline" className="flex items-center space-x-2">
           <ArrowLeft className="w-4 h-4" />
           <span>Previous</span>
@@ -339,11 +365,11 @@ export function CompletionAndPublish({ businessData, onPreviewClick }: Completio
         <Button 
           onClick={handlePublish}
           disabled={isPublishing}
-          className="bg-purple-600 hover:bg-purple-700 text-white px-8"
+          className="bg-[#6F00FF] hover:bg-purple-700 text-white px-8"
         >
           {isPublishing ? "Publishing..." : "Publish My Business Listing"}
         </Button>
-      </div>
+      </div> */}
     </div>
   )
 }

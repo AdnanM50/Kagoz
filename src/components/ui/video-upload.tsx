@@ -236,7 +236,7 @@ export default function VideoUploader({
                 </div>
                 <Button 
                   onClick={handleUrlSubmit}
-                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white"
+                  className="px-4 py-2 bg-[#6F00FF] hover:bg-purple-700 text-white"
                 >
                   Add
                 </Button>
@@ -391,7 +391,7 @@ export default function VideoUploader({
               </div>
               <Button 
                 onClick={handleUrlSubmit}
-                className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white"
+                className="px-4 py-2 bg-[#6F00FF] hover:bg-purple-700 text-white"
               >
                 Add
               </Button>

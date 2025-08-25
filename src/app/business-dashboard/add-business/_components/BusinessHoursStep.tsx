@@ -399,7 +399,7 @@ export default function BusinessHoursStep({ data, onUpdate, onNext, onBack }: Bu
                         ))}
                         <button
                          
-                          className="text-purple-600 cursor-pointer p-0 h-auto"
+                          className="text-[#6F00FF] cursor-pointer p-0 h-auto"
                           onClick={() => addTimeSlot(day)}
                         >
                           + Add Another Time Slot

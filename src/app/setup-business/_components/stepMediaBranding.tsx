@@ -129,7 +129,7 @@ export function StepMediaBranding({ businessData, updateBusinessData }: StepProp
       <div className="lg:col-span-2">
         <div>
           <div className="flex items-center space-x-2 mb-6">
-            <Camera className="w-5 h-5 text-purple-600" />
+            <Camera className="w-5 h-5 text-[#6F00FF]" />
             <h2 className="text-lg font-semibold">Media & Business Branding</h2>
           </div>
           <p className="text-gray-600 mb-6">Add Visuals to Represent Your Business</p>
@@ -259,7 +259,7 @@ export function StepMediaBranding({ businessData, updateBusinessData }: StepProp
       <div>
         <div className=" border p-6 rounded-2xl">
           <div className="flex items-center space-x-2 mb-4">
-            <div className="w-2 h-2 bg-purple-600 rounded-full"></div>
+            <div className="w-2 h-2 bg-[#6F00FF] rounded-full"></div>
             <h3 className="font-semibold">Business Card Preview</h3>
           </div>
           <div className="w-full  border-0 ">
@@ -287,7 +287,7 @@ export function StepMediaBranding({ businessData, updateBusinessData }: StepProp
                         className="w-12 h-12 rounded-full object-cover border-2 border-red-500"
                       />
                     ) : (
-                      <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center border-2 border-red-500">
+                      <div className="w-12 h-12 bg-[#6F00FF] rounded-full flex items-center justify-center border-2 border-red-500">
                         <Building2 className="w-6 h-6 text-white" />
                       </div>
                     )}

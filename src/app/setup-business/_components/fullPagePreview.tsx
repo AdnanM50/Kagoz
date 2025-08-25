@@ -76,20 +76,20 @@ export function FullPagePreview({ businessData, onBack }: FullPagePreviewProps) 
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="border-b border-gray-200 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-2 h-2 bg-purple-600 rounded-full"></div>
-            <h1 className="text-xl font-bold text-gray-900">Complete Business Preview</h1>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center">
-              <User className="w-4 h-4 text-white" />
+        {/* <div className="border-b border-gray-200 px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-2 h-2 bg-[#6F00FF] rounded-full"></div>
+              <h1 className="text-xl font-bold text-gray-900">Complete Business Preview</h1>
             </div>
-            <ChevronDown className="w-4 h-4 text-gray-700" />
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center">
+                <User className="w-4 h-4 text-white" />
+              </div>
+              <ChevronDown className="w-4 h-4 text-gray-700" />
+            </div>
           </div>
-        </div>
-      </div>
+        </div> */}
 
       <div className="max-w-4xl mx-auto px-6 py-8">
         {/* Banner Image */}
@@ -345,7 +345,7 @@ export function FullPagePreview({ businessData, onBack }: FullPagePreviewProps) 
           <p className="text-gray-600 mb-8">Almost there! Add more details to improve visibility.</p>
           
           <div className="flex flex-col items-center space-y-4">
-            <Button className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-lg">
+            <Button className="bg-[#6F00FF] hover:bg-purple-700 text-white px-8 py-3 rounded-lg">
               Publish My Business Listing
             </Button>
             <p className="text-sm text-gray-500">7 views today</p>
